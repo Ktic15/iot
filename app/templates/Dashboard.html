@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Machine list</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </nav>
+  
+<style>
+    .myDiv {
+      border: 10px outset;
+    
+    }
+    </style>
+<div class="container">
+    <div class="row" >
+      {% for item in list_machine %}
+      <div class="col-lg-4"style="padding: 5px;">
+      <div class="card card-body" >
+        <form action="" method="POST">
+            <div class="form-group">
+                <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
+
+                <div><label><b>Production effeciency:</b> N/A :: N/A</label></div>
+                <a href="/machine/edit/{{item.mno}}"><button class="btn btn-primary btn-block">
+                    View / edit  
+                  </button></a>
+              </div>
+            
+        </form>
+    </div>
+</div>
+{% endfor %} 
+    </div>
+</div>
+
+{% endblock %}

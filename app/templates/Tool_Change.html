@@ -1,0 +1,215 @@
+{% extends "layout.html" %}
+{% block body %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Data Report</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="navbar-nav">
+      <li class="nav-item ">
+        <a class="nav-link" href="/operator_assignment">Operator Assignment </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/tool_change">Tool change<span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item ">
+        <a class="nav-link" href="/machine_stoppage">Machine Stoppage</a>
+      </li>
+    </li>
+    </ul>
+  </div>
+</nav>
+
+
+ <div class="row"><div class="col-lg-3"><h2>Tool Change</h2></div></div>
+  <div class="row">
+    <div class="col-lg-3">
+      {% with messages = get_flashed_messages()  %}
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <div class="card card-body">
+        <h3>Upload Excel File</h3>
+        <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
+          <div class="form-group"> 
+          <input type="text" class="form-control" name="fname" value="Svindex" >
+          <input type="file" name="file"
+          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+            <input class="btn btn-primary btn-block" type="submit" value="Upload">
+          </div> 
+        </form>
+        <form action="/oa/add_entry" method="POST">
+          <h2> Add Details </h2>
+            <div class="form-group">
+              <label>Product line:</label>
+              <select id='pl' name="proline" class="form-control">
+                <option value="" >Select Product line </option>
+                {% for item in Plitems %}
+                <option value="{{ item.pcode }}" >{{ item.pcode }} </option>
+                {% endfor %}
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Date:</label>
+                <input type="date" name="cdate"class="form-control" name="cdate">
+              </div>
+              <div class="form-group">
+                <label>Shift:</label>
+              <select id='shift'name="shift"class="form-control">
+                <option value="" >Select </option>
+                {% for item in Sitems %}
+                <option value="{{ item.scode }}" >{{ item.scode }} </option>
+                {% endfor %}
+                </select>
+              </div>
+              <br>
+              <div class="form-group">
+                <label>Machine No.:</label>
+                <select id='machsel' name ="mno"class="form-control" onclick="fillmach()">
+                  <option value="" >Select </option>
+                  {% for item in Mitems %}
+                  <option value="{{ item.mname}},{{ item.mno }}" >{{ item.mno }} </option>
+                  {% endfor %}
+                  </select>
+              </div>
+              <div class="form-group">
+                <label>Machine Name:</label>
+                <input type="text" class="form-control" id ="mname"name="mname" placeholder="Machine Name">
+              </div>
+
+              <br>
+              <div class="form-group">
+                <label>Operator id:</label>
+                <select id='opsel' name="oid" class="form-control" onclick="fillop()">
+                  <option value="" >Select </option>
+                  {% for item in Eitems %}
+                  <option value="{{ item.employee_name}},{{ item.employee_code }}" >{{ item.employee_code }} </option>
+                  {% endfor %}
+                  </select>
+              </div>
+              <div class="form-group">
+                <label>Operator Name:</label>
+                <input type="text" class="form-control" id ="oname"name="oname" placeholder="Operator Name">
+              </div>
+
+
+              <br>
+              <div class="form-group">
+                <label>Part No.:</label>
+                <select id='partsel' name="pno" class="form-control" onclick="fillpart()">
+                  <option value="" >Select </option>
+                  {% for item in Pitems %}
+                  <option value="{{ item.pdes}},{{ item.pcode }}" >{{ item.pcode }} </option>
+                  {% endfor %} 
+                  </select>
+              </div>
+              <div class="form-group">
+                <label>Part Description:</label>
+                <input type="text" class="form-control" id ="pdes"name="pdes" placeholder="Part Description">
+              </div>
+
+              <br>
+              <div class="form-group">
+                <label>Shift Supervisor Name:</label>
+                <select id='ssel' name="svname" class="form-control" onclick="fillsup()">
+                  <option value="" >Select </option>
+                  {% for item in Svitems %}
+                  <option value="{{ item.employee_name }}" >{{ item.employee_name }} </option>
+                  {% endfor %}
+                  </select>
+              </div>
+              <div class="form-group">
+                <label>Time of Allocation:</label>
+                <input type="time" class="form-control" name="ctime">
+              </div>
+
+              <div class="form-group">
+                <label>Operator changed:</label>
+                <select id='opc' name="opc" class="form-control" >
+                  <option value="N" >No </option>
+                  
+                  <option value="Y" >Yes</option>
+                  
+                  </select>
+              </div>
+              
+          <button class="btn btn-primary btn-block">
+            Save 
+          </button>
+          <br>
+          <br>
+        </form>
+        
+      </div>
+    </div>
+    <div class="col-md-8">
+        <table id="dtable" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+          <tr>
+            <td>Sno</td>
+            <td>Product_line</td>
+            <td>Date_</td>
+            <td>Shift</td>
+            <td>Machine_No</td>
+            <td>Operator_Id</td>
+            <td>Part_No</td>
+            <td>Shift_supervisor_name</td>
+            <td>Time_</td>
+            <td>operator_change</td>
+            <td>Action</td>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in list_operators %}
+          <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            <td>{{row[4]}}</td>
+            <td>{{row[5]}}</td>
+            <td>{{row[6]}}</td>
+            <td>{{row[7]}}</td>
+            <td>{{row[8]}}</td>
+            <td>{{row[9]}}</td>
+            <td width="130">
+              <a href="/oa/change/{{row[0]}}" class="btn btn-secondary btn-sm">Change operator</a>
+              
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  function fillmach() {
+      var val= document.getElementById("machsel").value;
+      val=val.slice(0,val.indexOf(','));
+
+    document.getElementById("mname").value = val;
+  }
+  function fillpart() {
+      var val= document.getElementById("partsel").value;
+      val=val.slice(0,val.indexOf(','));
+
+    document.getElementById("pdes").value = val;
+  }
+  function fillop() {
+      var val= document.getElementById("opsel").value;
+      val=val.slice(0,val.indexOf(','));
+
+    document.getElementById("oname").value = val;
+  }
+  </script>
+{% endblock %} 

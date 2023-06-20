@@ -1,0 +1,33 @@
+
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card card-body">
+        <form action="/shift/update/{{Shift_Master.scode}}" method="POST">
+          <div class="form-group">
+            <label for="scode">Shift Code.: </label>
+            <input type="text" name="scode" value="{{Shift_Master.scode}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="sname">Shift Name: </label>
+            <input type="text" name="sname" value="{{Shift_Master.sname}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="stime">Shift Timing: </label>
+            <input type="text" name="stime" value="{{Shift_Master.stime}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="brlu">Break/Lunch: </label>
+            <input type="text" name="brlu" value="{{Shift_Master.brlu}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

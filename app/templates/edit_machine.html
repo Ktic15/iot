@@ -1,0 +1,45 @@
+
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card card-body">
+        <form action="/machine/update/{{Machine_Master.mno}}" method="POST">
+          <div class="form-group">
+            <label for="Mno">Machine No.: </label>
+            <input type="text" name="Mno" value="{{Machine_Master.mno}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="mname">Machine Name: </label>
+            <input type="text" name="mname" value="{{Machine_Master.mname}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="mcat">Machine Category </label>
+            <input type="text" name="mcat" value="{{Machine_Master.mcat}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="mmnu">Machine Manufacturer: </label>
+            <input type="text" name="mmnu" value="{{Machine_Master.mmnu}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="contdet">Controller Details: </label>
+            <input type="text" name="contdet" value="{{Machine_Master.contdet}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="doc">Date Of Constructions: </label>
+            <input type="text" name="doc" value="{{Machine_Master.doc}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="mkva">Machine KVA: </label>
+            <input type="text" name="mkva" value="{{Machine_Master.mkva}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

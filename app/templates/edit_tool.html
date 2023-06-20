@@ -1,0 +1,37 @@
+
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card card-body">
+        <form action="/tool/update/{{Tool_Master.tno}}" method="POST">
+          <div class="form-group">
+            <label for="tno">Tool No.: </label>
+            <input type="text" name="tno" value="{{Tool_Master.tno}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="tname">Tool Name: </label>
+            <input type="text" name="tname" value="{{Tool_Master.tname}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="ttype">Tool Type: </label>
+            <input type="text" name="ttype" value="{{Tool_Master.ttype}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="tlpc">Tool Life Permissible Count: </label>
+            <input type="text" name="tlpc" value="{{Tool_Master.tlpc}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="maccat">Machine Category: </label>
+            <input type="text" name="maccat" value="{{Tool_Master.maccat}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

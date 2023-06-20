@@ -1,0 +1,41 @@
+
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card card-body">
+        <form action="/part/update/{{Part_Master.pcode}}" method="POST">
+          <div class="form-group">
+            <label for="pcode">Part Code: </label>
+            <input type="text" name="pcode" value="{{Part_Master.pcode}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="pdes">Part Description: </label>
+            <input type="text" name="pdes" value="{{Part_Master.pdes}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="cpn">Customer Part No.: </label>
+            <input type="text" name="cpn" value="{{Part_Master.cpn}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="proline">Product line: </label>
+            <input type="text" name="proline" value="{{Part_Master.proline}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="npccps">NPC Count per Shift: </label>
+            <input type="text" name="npccps" value="{{Part_Master.npccps}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="pdesc">Part Description: </label>
+            <input type="text" name="pdesc" value="{{Part_Master.pdesc}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

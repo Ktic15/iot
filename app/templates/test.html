@@ -1,0 +1,28 @@
+<html>
+  <head>
+  </head>
+<body>
+<form>
+<label>Select date:</label>
+<input type="date" value="10/06/2023">
+<input type="time">
+<select id='sel' onclick="fillname()">
+{% for item in items %}
+<option value="{{ item.employee_name}},{{ item.employee_code }}" >{{ item.employee_code }} </option>
+{% endfor %}
+</select>
+<label>Employee name</label>
+<input type="text" class="form-control" name="ename" id="ename" value="Employee Name" >
+
+</form>
+
+<script>
+    function fillname() {
+        var val= document.getElementById("sel").value;
+        val=val.slice(0,val.indexOf(','));
+
+      document.getElementById("ename").value = val;
+    }
+    </script>
+</body>
+</html>s

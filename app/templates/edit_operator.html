@@ -1,0 +1,61 @@
+
+{% extends "layout.html" %}
+{% block body %}
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card card-body">
+        <form action="/oa/add_entry" method="POST">
+          <div class="form-group">
+            <label for="sno">sno: </label>
+            <input type="number" name="sno" value="{{operator.sno}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="proline">Product_line: </label>
+            <input type="text" name="proline" value="{{operator.product_line}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="cdate">Date: </label>
+            <input type="date" name="cdate" value="{{operator.date_}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="shift">Shift: </label>
+            <input type="text" name="shift" value="{{operator.shift}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="mno">Machine_No: </label>
+            <input type="text" name="mno" value="{{operator.machine_no}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="oid">Operator Id: </label>
+            <input type="text" name="oid" value="{{operator.operator_id}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="pno">Part No: </label>
+            <input type="text" name="pno" value="{{operator.part_no}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="svname">Shift Supervisor Name: </label>
+            <input type="text" name="svname" value="{{operator.shift_supervisor_name}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="ctime">Time: </label>
+            <input type="time" name="ctime" value="{{operator.time_}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="opc">operator change: </label>
+            <input type="text" name="opc" value="Y" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="reason">Reason: </label>
+            <input type="text" name="reason" value="" class="form-control">
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
