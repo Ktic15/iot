@@ -12,7 +12,8 @@ DB_HOST = "localhost"
 DB_NAME = "postgres"
 DB_USER = "postgres"
 DB_PASS = "12345678"
- 
+DB_PORT = "5432"
+
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
 
 @app.route('/operator_assignment')
@@ -119,9 +120,7 @@ def view():
         cursor.close()
   
   
-    conn = psycopg2.connect(
-            database="postgres", user='postgres', password='12345678', host='127.0.0.1', port='5432'
-    )
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST port=DB_PORT )
     tn=""
     if(request.form['fname']=="EIndex"):
         tn="employee_master"
