@@ -540,14 +540,36 @@ def DhIndex():
     list_users = cur.fetchall()
     return render_template('Datahub.html', list_product_line = list_users)
  
-@app.route('/report')
+@app.route('/report', methods=['POST','GET'])
 def RIndex():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Product_line_Master"
+    list_data = []
+    table_vs_column=[]
+    if request.method == 'POST':
+        for selected_column in request.form:
+            selected_table = request.form[selected_column]
+            table_vs_column.append(selected_table+"."+selected_column)
+
+        s = "SELECT "
+        for column in table_vs_column:
+            s+=column+","
+        s=s[0:-1]
+        s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno"
+        cur.execute(s) # Execute the SQL
+        list_data = cur.fetchall()
+
+    s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
     cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Report.html', list_product_line = list_users)
- 
+    employee_master = cur.fetchall()
+
+    s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_master\'"
+    cur.execute(s) # Execute the SQL
+    machine_master = cur.fetchall()
+
+    s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
+    cur.execute(s) # Execute the SQL
+    machine_operator = cur.fetchall()
+    return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
