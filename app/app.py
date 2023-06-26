@@ -14,7 +14,7 @@ DB_USER = "postgres"
 DB_PASS = "gokul"
 DB_PORT = "5432"
 
-conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT )
 
 @app.route('/operator_assignment')
 def Svindex():
