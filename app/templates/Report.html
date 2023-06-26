@@ -53,8 +53,11 @@
                 </div>
 
 
-                <button class="btn btn-primary btn-block">
+                <button class="btn btn-primary btn-block" name="save">
                     Save
+                </button>
+                <button class="btn btn-primary btn-block" name="export">
+                    export
                 </button>
                 <br>
                 <br>
@@ -85,9 +88,12 @@
 </div>
 </div>
 <script>
+var status = '{{status}}';
+if (status!=""){
+    alert(status);
+}
 
-
-  </script>
+</script>
 
 
 {% endblock %}

@@ -4,7 +4,8 @@ from fileinput import filename
 from flask import Flask, render_template, request, redirect, url_for, flash
 import psycopg2 #pip install psycopg2 
 from psycopg2 import extras
- 
+import datetime
+
 app = Flask(__name__)
 app.secret_key = "cairocoders-ednalan"
  
@@ -15,6 +16,10 @@ DB_PASS = "gokul"
 DB_PORT = "5432"
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT )
+
+# Global variables
+list_data = []
+table_vs_column=[]
 
 @app.route('/operator_assignment')
 def Svindex():
@@ -543,20 +548,32 @@ def DhIndex():
 @app.route('/report', methods=['POST','GET'])
 def RIndex():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    list_data = []
-    table_vs_column=[]
+    global list_data
+    global table_vs_column
+    status = ""
     if request.method == 'POST':
-        for selected_column in request.form:
-            selected_table = request.form[selected_column]
-            table_vs_column.append(selected_table+"."+selected_column)
+        if "save" in request.form:
+            list_data = []
+            table_vs_column=[]
+            for selected_column in request.form:
+                if selected_column!="save":
+                    selected_table = request.form[selected_column]
+                    table_vs_column.append(selected_table+"."+selected_column)
 
-        s = "SELECT "
-        for column in table_vs_column:
-            s+=column+","
-        s=s[0:-1]
-        s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno"
-        cur.execute(s) # Execute the SQL
-        list_data = cur.fetchall()
+            s = "SELECT "
+            for column in table_vs_column:
+                s+=column+","
+            s=s[0:-1]
+            s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno"
+            cur.execute(s) # Execute the SQL
+            list_data = cur.fetchall()
+        elif "export" in request.form:
+            if list_data!=[]:
+                df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=table_vs_column)
+                df.to_excel('Reports/report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]+".xlsx", sheet_name='sheet 1')
+                status="export success"
+            else:
+                status="No date to export"
 
     s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
     cur.execute(s) # Execute the SQL
@@ -569,7 +586,7 @@ def RIndex():
     s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
     cur.execute(s) # Execute the SQL
     machine_operator = cur.fetchall()
-    return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data)
+    return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
 
 if __name__ == "__main__":
     app.run(debug=True)
