@@ -21,6 +21,11 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 list_data = []
 table_vs_column=[]
 
+
+@app.route('/')
+def GhIndex():
+     return  redirect("/dashboard")
+
 @app.route('/operator_assignment')
 def Svindex():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
