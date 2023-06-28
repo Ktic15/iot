@@ -562,8 +562,7 @@ def RIndex():
             table_vs_column=[]
             for selected_column in request.form:
                 if selected_column!="save":
-                    selected_table = request.form[selected_column]
-                    table_vs_column.append(selected_table+"."+selected_column)
+                    table_vs_column.append(selected_column)
 
             s = "SELECT "
             for column in table_vs_column:
@@ -579,6 +578,9 @@ def RIndex():
                 status="export success"
             else:
                 status="No date to export"
+        if "reset" in request.form:
+            list_data = []
+            table_vs_column=[]
 
     s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
     cur.execute(s) # Execute the SQL
