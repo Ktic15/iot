@@ -1,5 +1,3 @@
-
-additional modules need to install for export
 pip install pandas
 pip install flask
 pip install psycopg2
