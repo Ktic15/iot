@@ -1,10 +1,12 @@
  #app.py
 import pandas
 from fileinput import filename
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import psycopg2 #pip install psycopg2 
 from psycopg2 import extras
 import datetime
+import re
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "cairocoders-ednalan"
@@ -25,6 +27,78 @@ table_vs_column=[]
 @app.route('/')
 def GhIndex():
      return  redirect("/dashboard")
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # Check if "username" and "password" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        print(password)
+        # Check if account exists using MySQL
+        cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', (username,))
+        # Fetch one record and return result
+        account = cursor.fetchone()
+        if account:
+            password_rs = account['password']
+            print(password_rs)
+            # If account exists in users table in out database
+            if check_password_hash(password_rs, password):
+                # Create session data, we can access this data in other routes
+                session['loggedin'] = True
+                session['id'] = account['id']
+                session['username'] = account['username']
+                # Redirect to home page
+                return redirect('/')
+            else:
+                # Account doesnt exist or username/password incorrect
+                flash('Incorrect username/password')
+        else:
+            # Account doesnt exist or username/password incorrect
+            flash('Incorrect username/password')
+    return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # Check if "username", "password" and "email" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        # Create variables for easy access
+        username = request.form['username']
+        password = request.form['password']
+        _hashed_password = generate_password_hash(password)
+        #Check if account exists using MySQL
+        cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', (username,))
+        account = cursor.fetchone()
+        print(account)
+        # If account exists show error and validation checks
+        if account:
+            flash('Account already exists!')
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            flash('Username must contain only characters and numbers!')
+        elif not username or not password:
+            flash('Please fill out the form!')
+        else:
+            # Account doesnt exists and the form data is valid, now insert new account into users table
+            cursor.execute("INSERT INTO loginCredentials (username, password, role) VALUES (%s,%s,%s)", (username, _hashed_password, "admin"))
+            conn.commit()
+            flash('You have successfully registered!')
+    elif request.method == 'POST':
+        # Form is empty... (no POST data)
+        flash('Please fill out the form!')
+    # Show registration form with message (if any)
+    return render_template('register.html')
+
+
+@app.route('/logout')
+def logout():
+    # Remove session data, this will log the user out
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    # Redirect to login page
+    return redirect(url_for('login'))
 
 @app.route('/operator_assignment')
 def Svindex():
@@ -552,48 +626,52 @@ def DhIndex():
  
 @app.route('/report', methods=['POST','GET'])
 def RIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    global list_data
-    global table_vs_column
-    status = ""
-    if request.method == 'POST':
-        if "save" in request.form:
-            list_data = []
-            table_vs_column=[]
-            for selected_column in request.form:
-                if selected_column!="save":
-                    table_vs_column.append(selected_column)
+    # Check if user is loggedin
+    if 'loggedin' in session:
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        global list_data
+        global table_vs_column
+        status = ""
+        if request.method == 'POST':
+            if "save" in request.form:
+                list_data = []
+                table_vs_column=[]
+                for selected_column in request.form:
+                    if selected_column!="save":
+                        table_vs_column.append(selected_column)
 
-            s = "SELECT "
-            for column in table_vs_column:
-                s+=column+","
-            s=s[0:-1]
-            s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno"
-            cur.execute(s) # Execute the SQL
-            list_data = cur.fetchall()
-        elif "export" in request.form:
-            if list_data!=[]:
-                df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=table_vs_column)
-                df.to_excel('Reports/report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]+".xlsx", sheet_name='sheet 1')
-                status="export success"
-            else:
-                status="No date to export"
-        if "reset" in request.form:
-            list_data = []
-            table_vs_column=[]
+                s = "SELECT "
+                for column in table_vs_column:
+                    s+=column+","
+                s=s[0:-1]
+                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno"
+                cur.execute(s) # Execute the SQL
+                list_data = cur.fetchall()
+            elif "export" in request.form:
+                if list_data!=[]:
+                    df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=table_vs_column)
+                    df.to_excel('Reports/report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]+".xlsx", sheet_name='sheet 1')
+                    status="export success"
+                else:
+                    status="No date to export"
+            if "reset" in request.form:
+                list_data = []
+                table_vs_column=[]
 
-    s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
-    cur.execute(s) # Execute the SQL
-    employee_master = cur.fetchall()
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
+        cur.execute(s) # Execute the SQL
+        employee_master = cur.fetchall()
 
-    s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_master\'"
-    cur.execute(s) # Execute the SQL
-    machine_master = cur.fetchall()
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_master\'"
+        cur.execute(s) # Execute the SQL
+        machine_master = cur.fetchall()
 
-    s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
-    cur.execute(s) # Execute the SQL
-    machine_operator = cur.fetchall()
-    return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
+        cur.execute(s) # Execute the SQL
+        machine_operator = cur.fetchall()
+        return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
+    # User is not loggedin redirect to login page
+    return redirect(url_for('login'))
 
 if __name__ == "__main__":
     app.run(debug=True)

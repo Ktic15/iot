@@ -28,7 +28,9 @@
             <li class="nav-item">
               <a class="nav-link" href="/report">Reports</a>
             </li>
-            
+              <li class="nav-item">
+                  <a class="nav-link" href="/logout" id="btnLogout">Logout</a>
+              </li>
           </ul>
         </div>
       </nav>
@@ -58,7 +60,18 @@ $(document).ready(function() {
        } 
     );
 } );
-  
+
+const btnLogout= document.querySelectorAll('#btnLogout');
+if(btnLogout) {
+  const btnArray = Array.from(btnLogout);
+  btnArray.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      if(!confirm('Are you sure you want to Logout?')){
+        e.preventDefault();
+      }
+    });
+  })
+}
 </script>
   </body>
 </html>
