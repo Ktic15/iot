@@ -1,5 +1,4 @@
-pip install pandas
-pip install flask
-pip install psycopg2
-pip install xlwt
-pip install openpyxl
+echo off
+pip install -r requirements.txt
+echo *************setup completed press enter to close.*******************
+TIMEOUT /T -1
