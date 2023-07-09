@@ -8,34 +8,49 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
 </head>
-<body style="background-color:#ccc;width:30%;margin: auto;margin-top:10%;" >
-<div class="login-box" >
-    <div class="login-header">Login</div>
-    <div class="login-body">
-        <p>Please enter your username and password</p>
-        <form class="form-group" action="{{ url_for('login') }}" method="post">
-            <label>Username</label>
-            <input type="text" class="form-control" name="username" placeholder="Username" id="username" required>
-            <label>Password</label>
-            <input type="password" class="form-control" name="password" placeholder="Password" id="password" required>
-            <input type="checkbox" value="checked"><b>Remember</b>
-            <input type="submit" value="Login" class="form-control btn btn-success " name="">
-        </form>
-        {% with messages = get_flashed_messages()  %}
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">×</span>
-            </button>
+<body>
+<div class="login-bg" style="background-color: #508bfc;">
+    <div class="check container py-5 ">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="login-header"><h2>Login</h2></div>
+                        <div class="container-fluid h-custom">
+                            <form class="form-group" action="{{ url_for('login') }}" method="post">
+                                <div class="form-outline mb-4">
+                                    <label  class="form-label" for="username" style="position: relative;  right: 120px;"><h5>Username</h5></label>
+                                    <input type="text" class="form-control form-control-lg" name="username" placeholder="Username" id="username" required/>
+                                </div>
+                                <div class="form-outline mb-3">
+                                    <label  class="form-label" for="password" style="position: relative;  right: 120px;"><h5>Password</h5></label>
+                                    <input type="password" class="form-control form-control-lg" name="password" placeholder="Password" id="password" required/>
+                                </div>
+
+                                <input type="submit" value="Login" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;" name="">
+                            </form>
+                            {% with messages = get_flashed_messages()  %}
+                            {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+                            <p class="medium fw-bold mt-2 pt-1 mb-0">Not having account? <a href="{{ url_for('register') }}" class="link-danger">Register</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
-        <p>No account <a href="{{ url_for('register') }}">Register</a></p>
     </div>
 </div>
 </body>
 </html>
+

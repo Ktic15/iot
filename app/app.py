@@ -49,6 +49,7 @@ def login():
                 session['loggedin'] = True
                 session['id'] = account['id']
                 session['username'] = account['username']
+                session['role'] = account['role']
                 # Redirect to home page
                 return redirect('/')
             else:
@@ -61,35 +62,37 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    # Check if "username", "password" and "email" POST requests exist (user submitted form)
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        # Create variables for easy access
-        username = request.form['username']
-        password = request.form['password']
-        _hashed_password = generate_password_hash(password)
-        #Check if account exists using MySQL
-        cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', (username,))
-        account = cursor.fetchone()
-        print(account)
-        # If account exists show error and validation checks
-        if account:
-            flash('Account already exists!')
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            flash('Username must contain only characters and numbers!')
-        elif not username or not password:
+    if 'loggedin' in session and session["role"]=="super_admin":
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        # Check if "username", "password" and "email" POST requests exist (user submitted form)
+        if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+            # Create variables for easy access
+            username = request.form['username']
+            password = request.form['password']
+            role = request.form['role']
+            _hashed_password = generate_password_hash(password)
+            #Check if account exists using MySQL
+            cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', (username,))
+            account = cursor.fetchone()
+            print(account)
+            # If account exists show error and validation checks
+            if account:
+                flash('Account already exists!')
+            elif not re.match(r'[A-Za-z0-9]+', username):
+                flash('Username must contain only characters and numbers!')
+            elif not username or not password:
+                flash('Please fill out the form!')
+            else:
+                # Account doesnt exists and the form data is valid, now insert new account into users table
+                cursor.execute("INSERT INTO loginCredentials (username, password, role) VALUES (%s,%s,%s)", (username, _hashed_password, role))
+                conn.commit()
+                flash('You have successfully registered!.')
+        elif request.method == 'POST':
+            # Form is empty... (no POST data)
             flash('Please fill out the form!')
-        else:
-            # Account doesnt exists and the form data is valid, now insert new account into users table
-            cursor.execute("INSERT INTO loginCredentials (username, password, role) VALUES (%s,%s,%s)", (username, _hashed_password, "admin"))
-            conn.commit()
-            flash('You have successfully registered!')
-    elif request.method == 'POST':
-        # Form is empty... (no POST data)
-        flash('Please fill out the form!')
-    # Show registration form with message (if any)
-    return render_template('register.html')
-
+        # Show registration form with message (if any)
+        return render_template('register.html')
+    return render_template('error_msg.html',errorMsg="Access Denied. Only super admin have the access to register new user")
 
 @app.route('/logout')
 def logout():
@@ -97,8 +100,23 @@ def logout():
     session.pop('loggedin', None)
     session.pop('id', None)
     session.pop('username', None)
+    session.pop('role', None)
     # Redirect to login page
     return redirect(url_for('login'))
+
+def havingAccess(roleCheck="", errorMsg="Access Denied. Only  \""):
+    if 'loggedin' in session:
+        if roleCheck!="":
+            if session["role"]==roleCheck or "admin" in session["role"]:
+                return True
+            else:
+                return redirect(url_for('errorPage',errorMsg=errorMsg+roleCheck+"\" and admin have the access"))
+        return True
+    return redirect(url_for('login'))
+
+@app.route('/error_msg/<errorMsg>')
+def errorPage(errorMsg):
+    return render_template('error_msg.html',errorMsg=errorMsg)
 
 @app.route('/operator_assignment')
 def Svindex():
@@ -218,29 +236,32 @@ def view():
 
 @app.route('/employee')
 def EIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Employee_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Employee_Master.html', list_users = list_users)
- 
+    if(havingAccess("hr")==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Employee_Master"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        return render_template('Employee_Master.html', list_users = list_users)
+    else:
+        return havingAccess("hr")
+
 @app.route('/add_Employee', methods=['POST'])
 def add_Employee():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    if request.method == 'POST':
-        ecode = request.form['ecode']
-        emaster = request.form['emaster']
-        Edeg = request.form['edeg']
-        aow = request.form['aow']
-        eaddress = request.form['eaddress']
-        eaadhar = request.form['eaadhar']
-        emobile = request.form['emobile']
-        Fmanager = request.form['fmanager']
-        cur.execute("INSERT INTO Employee_Master (Employee_Code,Employee_Name,Employee_designation,Area_of_Work,Employee_Address,Employee_Aadhaar,Employee_Mobile_No,Function_Manager) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)", (ecode,emaster,Edeg,aow,eaddress,eaadhar,emobile,Fmanager))
-        conn.commit()
-        flash('Employee Added successfully')
-        return redirect(url_for('EIndex'))
- 
+     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+     if request.method == 'POST':
+         ecode = request.form['ecode']
+         emaster = request.form['emaster']
+         Edeg = request.form['edeg']
+         aow = request.form['aow']
+         eaddress = request.form['eaddress']
+         eaadhar = request.form['eaadhar']
+         emobile = request.form['emobile']
+         Fmanager = request.form['fmanager']
+         cur.execute("INSERT INTO Employee_Master (Employee_Code,Employee_Name,Employee_designation,Area_of_Work,Employee_Address,Employee_Aadhaar,Employee_Mobile_No,Function_Manager) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)", (ecode,emaster,Edeg,aow,eaddress,eaadhar,emobile,Fmanager))
+         conn.commit()
+         flash('Employee Added successfully')
+         return redirect(url_for('EIndex'))
+
 @app.route('/edit/<ecode>', methods = ['POST', 'GET'])
 def get_employee(ecode):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -627,7 +648,7 @@ def DhIndex():
 @app.route('/report', methods=['POST','GET'])
 def RIndex():
     # Check if user is loggedin
-    if 'loggedin' in session:
+    if(havingAccess()==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         global list_data
         global table_vs_column
@@ -671,7 +692,7 @@ def RIndex():
         machine_operator = cur.fetchall()
         return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
     # User is not loggedin redirect to login page
-    return redirect(url_for('login'))
+    return havingAccess()
 
 if __name__ == "__main__":
     app.run(debug=True)

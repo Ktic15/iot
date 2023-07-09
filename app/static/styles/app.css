@@ -1,0 +1,14 @@
+.check{
+    margin-top:5%;
+}
+.login-bg{
+    height:100%;
+    width:100%;
+    position:absolute;
+}
+.error_msg{
+    position:absolute;
+    margin-top:20%;
+    margin-left:50%;
+    transform:translate(-50%,-50%);
+}

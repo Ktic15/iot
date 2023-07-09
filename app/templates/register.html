@@ -9,52 +9,70 @@
     <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
 </head>
-<body style="background-color:#ccc;width:30%;margin: auto;margin-top:10%;">
-<div class="container">
-    <div class="row main">
-        <div class="main-login main-center">
-            <h5>Register New user or login existing account</h5>
-            <form action="{{ url_for('register') }}" method="post" autocomplete="off">
-                <div class="form-group">
-                    <label for="username" class="cols-sm-2 control-label">Username</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" name="username" id="username" placeholder="Enter your Username" required>
+<body>
+<div class="login-bg" style="background-color: #508bfc;">
+    <div class="check container py-5 ">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="login-header"><h2>Register</h2></div>
+                            <div class="container-fluid h-custom">
+                                <form action="{{ url_for('register') }}" method="post" autocomplete="off">
+                                    <div class="form-outline mb-4">
+                                        <label for="username" class="cols-sm-2 control-label" style="position: relative;  right: 120px;"><h5>Username</h5></label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-users fa" style="position:relative; right:10px; top:5px;" aria-hidden="true"></i></span>
+                                                <input type="text" class="form-control" name="username" id="username" placeholder="Enter your Username" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <label for="password" class="cols-sm-2 control-label" style="position: relative;  right: 120px;"><h5>Password</h5></label>
+                                        <div class="cols-sm-10">
+                                            <div class="input-group">
+                                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" style="position:relative; right:10px; top:5px;" aria-hidden="true"></i></span>
+                                                <input type="password" class="form-control" name="password" placeholder="Password" id="password" required  placeholder="Enter your Password"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <label for="role" class="cols-sm-2 control-label" style="position: relative;  right: 15px;"><h5> Select Role:</h5> </label>
+                                        <select name="role" id="role" class="btn btn-info" style="width:60%" required>
+                                            <option value="admin">admin</option>
+                                            <option value="hr">hr</option>
+                                            <option value="guest">guest</option>
+                                            <option value="viewer">viewer</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group ">
+                                        {% with messages = get_flashed_messages()  %}
+                                        {% if messages %}
+                                        {% for message in messages %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            {{ message }}
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        {% endfor %}
+                                        {% endif %}
+                                        {% endwith %}
+                                        <input type="submit" value="Register" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;" name="">
+                                        <p class="medium fw-bold mt-2 pt-1 mb-0">Already having a account? <a href="{{ url_for('login') }}" class="link-danger">Login</a></p>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="password" class="cols-sm-2 control-label">Password</label>
-                    <div class="cols-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
-                            <input type="password" class="form-control" name="password" placeholder="Password" id="password" required  placeholder="Enter your Password"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group ">
-                    {% with messages = get_flashed_messages()  %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    <input type="submit" value="Register" class="form-control btn btn-primary " name="">
-                    <p style="padding:5px;">
-                        <a href="{{ url_for('login') }}" class="btn btn-dark ">Login</a></p>
-
-                </div>
-
-            </form>
+            </div>
         </div>
     </div>
 </div>
