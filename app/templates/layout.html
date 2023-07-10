@@ -11,7 +11,8 @@
 <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> <!-- importing jquery-->
-</head>
+      <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+  </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">AVOCarbon-EMS</a>
@@ -31,10 +32,18 @@
             </li>
           </ul>
         </div>
-        <a class="nav-link" href="/logout" id="btnLogout" style="position:absolute; right:30px; color:white;">Logout</a>
         {%if session['role']=="super_admin" %}
-            <a href="{{ url_for('register') }}" style="position:absolute; right:130px; color:white;">Register User</a>
+        <a href="{{ url_for('register') }}" style="position:absolute; right:430px; color:white;">Register User</a>
         {% endif %}
+        {%if session['loggedin'] %}
+            <div class="nav-session-details">
+                <span><b>Username:</b> {{session['username']}}&nbsp;&nbsp;</span>
+                <span><b>Role:</b> {{session['role']}}</span>
+            </div>
+            <a class="nav-link" href="/logout" id="btnLogout" style="position:absolute; right:30px; color:white;">Logout</a>
+        {% endif%}
+
+
       </nav>
 
     <div class="container-fluid" style="padding:0%">
