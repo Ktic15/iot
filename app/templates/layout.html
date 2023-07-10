@@ -20,20 +20,23 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item active">
+          <ul class="navbar-nav" id="nav-header">
+            <li class="nav-item">
               <a class="nav-link" id="nav_dashboard" href="/dashboard">Dashboard <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link" id="nav_datahub" href="/datahub">DataHub</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" id="nav_manage" href="/manage">Manage</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" id="nav_report" href="/report">Reports</a>
             </li>
           </ul>
         </div>
-        {%if session['role']=="super_admin" %}
-        <a href="{{ url_for('register') }}" style="position:absolute; right:430px; color:white;">Register User</a>
+        {%if session['role']=="admin" %}
+        <a href="{{ url_for('register') }}" style="position:absolute; right:380px; color:white;">Register User</a>
         {% endif %}
         {%if session['loggedin'] %}
             <div class="nav-session-details">

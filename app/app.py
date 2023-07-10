@@ -62,7 +62,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if 'loggedin' in session and session["role"]=="super_admin":
+    if 'loggedin' in session and session["role"]=="admin":
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # Check if "username", "password" and "email" POST requests exist (user submitted form)
         if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
@@ -92,7 +92,7 @@ def register():
             flash('Please fill out the form!')
         # Show registration form with message (if any)
         return render_template('register.html')
-    return render_template('error_msg.html',errorMsg="Access Denied. Only super admin have the access to register new user")
+    return render_template('error_msg.html',errorMsg="Access Denied. Only Admin have the access to register new user")
 
 @app.route('/logout')
 def logout():
@@ -104,13 +104,13 @@ def logout():
     # Redirect to login page
     return redirect(url_for('login'))
 
-def havingAccess(roleCheck="", errorMsg="Access Denied. Only  \""):
+def havingAccess(roleCheck=[], errorMsg="Access Denied. Only "):
     if 'loggedin' in session:
-        if roleCheck!="":
-            if session["role"]==roleCheck or "admin" in session["role"]:
+        if roleCheck:
+            if session["role"] in roleCheck or "admin"==session["role"] or "it-role"==session["role"]:
                 return True
             else:
-                return redirect(url_for('errorPage',errorMsg=errorMsg+roleCheck+"\" and admin have the access"))
+                return redirect(url_for('errorPage',errorMsg=errorMsg+', '.join(map(str, roleCheck))+", IT Role and admin have the access"))
         return True
     return redirect(url_for('login'))
 
@@ -120,29 +120,31 @@ def errorPage(errorMsg):
 
 @app.route('/operator_assignment')
 def Svindex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Product_Line_Master"
-    cur.execute(s) # Execute the SQL
-    Plitem = cur.fetchall()
-    s = "SELECT * FROM Shift_Master"
-    cur.execute(s) # Execute the SQL
-    Sitem = cur.fetchall()
-    s = "SELECT * FROM Machine_Master"
-    cur.execute(s) # Execute the SQL
-    Mitem = cur.fetchall()
-    s = "SELECT * FROM Part_Master"
-    cur.execute(s) # Execute the SQL
-    Pitem = cur.fetchall()
-    s = "SELECT * FROM Employee_Master"
-    cur.execute(s) # Execute the SQL
-    Eitem = cur.fetchall()
-    s = "SELECT * FROM Employee_Master where employee_designation='Shift supervisor'"
-    cur.execute(s) # Execute the SQL
-    Svitem = cur.fetchall()
-    s = "SELECT * FROM machine_operator where date_=current_date"
-    cur.execute(s) # Execute the SQL
-    opitems = cur.fetchall()
-    return render_template('Operator_Assignment.html', Plitems = Plitem, Sitems = Sitem, Mitems=Mitem,Pitems=Pitem,Eitems=Eitem, Svitems = Svitem,list_operators=opitems)
+    if(havingAccess(["supervisor"])==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Product_Line_Master"
+        cur.execute(s) # Execute the SQL
+        Plitem = cur.fetchall()
+        s = "SELECT * FROM Shift_Master"
+        cur.execute(s) # Execute the SQL
+        Sitem = cur.fetchall()
+        s = "SELECT * FROM Machine_Master"
+        cur.execute(s) # Execute the SQL
+        Mitem = cur.fetchall()
+        s = "SELECT * FROM Part_Master"
+        cur.execute(s) # Execute the SQL
+        Pitem = cur.fetchall()
+        s = "SELECT * FROM Employee_Master"
+        cur.execute(s) # Execute the SQL
+        Eitem = cur.fetchall()
+        s = "SELECT * FROM Employee_Master where employee_designation='Shift supervisor'"
+        cur.execute(s) # Execute the SQL
+        Svitem = cur.fetchall()
+        s = "SELECT * FROM machine_operator where date_=current_date"
+        cur.execute(s) # Execute the SQL
+        opitems = cur.fetchall()
+        return render_template('Operator_Assignment.html', Plitems = Plitem, Sitems = Sitem, Mitems=Mitem,Pitems=Pitem,Eitems=Eitem, Svitems = Svitem,list_operators=opitems)
+    return havingAccess(["supervisor"])
 
 @app.route('/oa/add_entry', methods=['POST'])
 def add_entry():
@@ -236,14 +238,14 @@ def view():
 
 @app.route('/employee')
 def EIndex():
-    if(havingAccess("hr")==True):
+    if(havingAccess(["hr"])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Employee_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         return render_template('Employee_Master.html', list_users = list_users)
     else:
-        return havingAccess("hr")
+        return havingAccess(["hr"])
 
 @app.route('/add_Employee', methods=['POST'])
 def add_Employee():
@@ -313,11 +315,13 @@ def delete_employee(ecode):
  
 @app.route('/part')
 def PIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Part_Master"
-    cur.execute(s) # Execute the SQL
-    list_parts = cur.fetchall()
-    return render_template('Part_Master.html', list_parts = list_parts)
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Part_Master"
+        cur.execute(s) # Execute the SQL
+        list_parts = cur.fetchall()
+        return render_template('Part_Master.html', list_parts = list_parts)
+    return havingAccess()
  
 @app.route('/part/add_part', methods=['POST'])
 def add_part():
@@ -380,11 +384,13 @@ def delete_part(pcode):
 
 @app.route('/machine')
 def MIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Machine_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Machine_Master.html', list_machine = list_users)
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Machine_Master"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        return render_template('Machine_Master.html', list_machine = list_users)
+    return havingAccess()
 
 @app.route('/machine/add_machine', methods=['POST'])
 def add_machine():
@@ -450,11 +456,13 @@ def delete_machine(Mno):
  
 @app.route('/tool')
 def TIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Tool_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Tool_Master.html', list_tool = list_users)
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Tool_Master"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        return render_template('Tool_Master.html', list_tool = list_users)
+    return havingAccess()
 
 @app.route('/tool/add_tool', methods=['POST'])
 def add_tool():
@@ -514,11 +522,13 @@ def delete_tool(tno):
 
 @app.route('/shift')
 def SIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Shift_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Shift_Master.html', list_shift = list_users)
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Shift_Master"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        return render_template('Shift_Master.html', list_shift = list_users)
+    return havingAccess()
 
 @app.route('/shift/add_shift', methods=['POST'])
 def add_shift():
@@ -574,12 +584,14 @@ def delete_shift(scode):
 
 @app.route('/product_line')
 def PLIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Product_line_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Product_line_Master.html', list_product_line = list_users)
- 
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Product_line_Master"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        return render_template('Product_line_Master.html', list_product_line = list_users)
+    return havingAccess()
+
 @app.route('/product_line/add_product_line', methods=['POST'])
 def add_product_line():
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -631,20 +643,27 @@ def delete_product_line(pcode):
  
 @app.route('/dashboard')
 def DbIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Machine_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Dashboard.html', list_machine = list_users)
- 
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM Machine_Master"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        return render_template('Dashboard.html', list_machine = list_users)
+    return havingAccess()
+
 @app.route('/datahub')
 def DhIndex():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    s = "SELECT * FROM Product_line_Master"
-    cur.execute(s) # Execute the SQL
-    list_users = cur.fetchall()
-    return render_template('Datahub.html', list_product_line = list_users)
- 
+    return redirect("/machine")
+    # cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    # s = "SELECT * FROM Product_line_Master"
+    # cur.execute(s) # Execute the SQL
+    # list_users = cur.fetchall()
+    # return render_template('Datahub.html', list_product_line = list_users)
+
+@app.route('/manage')
+def manage():
+    return redirect("/operator_assignment");
+
 @app.route('/report', methods=['POST','GET'])
 def RIndex():
     # Check if user is loggedin
