@@ -37,7 +37,7 @@ def login():
         password = request.form['password']
         print(password)
         # Check if account exists using MySQL
-        cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', (username,))
+        cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', [username])
         # Fetch one record and return result
         account = cursor.fetchone()
         if account:
@@ -72,7 +72,7 @@ def register():
             role = request.form['role']
             _hashed_password = generate_password_hash(password)
             #Check if account exists using MySQL
-            cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', (username,))
+            cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', [username])
             account = cursor.fetchone()
             print(account)
             # If account exists show error and validation checks
