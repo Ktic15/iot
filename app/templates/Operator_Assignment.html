@@ -53,7 +53,7 @@
           <h2> Add Details </h2>
             <div class="form-group">
               <label>Product line:</label>
-              <select id='pl' name="proline" class="form-control">
+              <select id='pl' name="proline" class="form-control" required>
                 <option value="" >Select Product line </option>
                 {% for item in Plitems %}
                 <option value="{{ item.pcode }}" >{{ item.pcode }} </option>
@@ -62,11 +62,11 @@
               </div>
               <div class="form-group">
                 <label>Date:</label>
-                <input type="date" name="cdate"class="form-control" name="cdate">
+                <input type="date" name="cdate"class="form-control" name="cdate" required>
               </div>
               <div class="form-group">
                 <label>Shift:</label>
-              <select id='shift'name="shift"class="form-control">
+              <select id='shift'name="shift"class="form-control" required>
                 <option value="" >Select </option>
                 {% for item in Sitems %}
                 <option value="{{ item.scode }}" >{{ item.scode }} </option>
@@ -76,53 +76,37 @@
               <br>
               <div class="form-group">
                 <label>Machine No.:</label>
-                <select id='machsel' name ="mno"class="form-control" onclick="fillmach()">
+                <select id='machsel' name ="mno"class="form-control" required>
                   <option value="" >Select </option>
                   {% for item in Mitems %}
-                  <option value="{{ item.mname}},{{ item.mno }}" >{{ item.mno }} </option>
+                  <option value="{{ item.mname}},{{ item.mno }}" >{{ item.mno }}/{{ item.mname}} </option>
                   {% endfor %}
                   </select>
               </div>
-              <div class="form-group">
-                <label>Machine Name:</label>
-                <input type="text" class="form-control" id ="mname"name="mname" placeholder="Machine Name">
-              </div>
-
               <br>
               <div class="form-group">
                 <label>Operator id:</label>
-                <select id='opsel' name="oid" class="form-control" onclick="fillop()">
+                <select id='opsel' name="oid" class="form-control" required>
                   <option value="" >Select </option>
                   {% for item in Eitems %}
-                  <option value="{{ item.employee_name}},{{ item.employee_code }}" >{{ item.employee_code }} </option>
+                  <option value="{{ item.employee_name}},{{ item.employee_code }}" >{{ item.employee_code }} / {{ item.employee_name}} </option>
                   {% endfor %}
                   </select>
               </div>
-              <div class="form-group">
-                <label>Operator Name:</label>
-                <input type="text" class="form-control" id ="oname"name="oname" placeholder="Operator Name">
-              </div>
-
-
               <br>
               <div class="form-group">
                 <label>Part No.:</label>
-                <select id='partsel' name="pno" class="form-control" onclick="fillpart()">
+                <select id='partsel' name="pno" class="form-control" required>
                   <option value="" >Select </option>
                   {% for item in Pitems %}
-                  <option value="{{ item.pdes}},{{ item.pcode }}" >{{ item.pcode }} </option>
+                  <option value="{{ item.pdes}},{{ item.pcode }}" >{{ item.pcode }} / {{ item.pdes}} </option>
                   {% endfor %} 
                   </select>
               </div>
-              <div class="form-group">
-                <label>Part Description:</label>
-                <input type="text" class="form-control" id ="pdes"name="pdes" placeholder="Part Description">
-              </div>
-
               <br>
               <div class="form-group">
                 <label>Shift Supervisor Name:</label>
-                <select id='ssel' name="svname" class="form-control" onclick="fillsup()">
+                <select id='ssel' name="svname" class="form-control" required>
                   <option value="" >Select </option>
                   {% for item in Svitems %}
                   <option value="{{ item.employee_name }}" >{{ item.employee_name }} </option>
@@ -131,16 +115,14 @@
               </div>
               <div class="form-group">
                 <label>Time of Allocation:</label>
-                <input type="time" class="form-control" name="ctime">
+                <input type="time" class="form-control" name="ctime" required>
               </div>
 
               <div class="form-group">
                 <label>Operator changed:</label>
-                <select id='opc' name="opc" class="form-control" >
+                <select id='opc' name="opc" class="form-control" required >
                   <option value="N" >No </option>
-                  
                   <option value="Y" >Yes</option>
-                  
                   </select>
               </div>
               
@@ -195,24 +177,6 @@
   </div>
 </div>
 <script>
-  function fillmach() {
-      var val= document.getElementById("machsel").value;
-      val=val.slice(0,val.indexOf(','));
-
-    document.getElementById("mname").value = val;
-  }
-  function fillpart() {
-      var val= document.getElementById("partsel").value;
-      val=val.slice(0,val.indexOf(','));
-
-    document.getElementById("pdes").value = val;
-  }
-  function fillop() {
-      var val= document.getElementById("opsel").value;
-      val=val.slice(0,val.indexOf(','));
-
-    document.getElementById("oname").value = val;
-  }
 
     $(document).ready(function() {
       $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );

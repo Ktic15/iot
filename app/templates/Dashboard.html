@@ -2,36 +2,61 @@
 {% block body %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Machine list</a>
+    <span style="color:white;"> Current Shift : {{currentShift}}</span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
   </nav>
-  
+
 <style>
     .myDiv {
       border: 10px outset;
     
     }
     </style>
-<div class="container">
+<div class="container-fluid" style="margin:0%;padding:1% 2%;">
     <div class="row" >
-      {% for item in list_machine %}
-      <div class="col-lg-4"style="padding: 5px;">
-      <div class="card card-body" >
-        <form action="" method="POST">
-            <div class="form-group">
-                <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
+        {% for item in list_machine %}
+          <div class="col-lg-3"style="padding: 5px;">
+            <div class="card card-body" >
+                    <div class="form-group">
+                        <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
+                        <div>
+                            <label>
+                                <b>Operator Name:</b>
+                                {%if item.employee_code%}
+                                    {{item.employee_code}}/{{item.employee_name}}
+                                {%else%}
+                                    Not yet Assigned
+                                {%endif%}
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <b>count:</b>
+                                {%if item.current_count%}
+                                    {{item.current_count}}
+                                {%else%}
+                                    No data
+                                {%endif%}
+                            </label>
+                        </div>
+                        <div>
+                            <label><b>Production <br>efficiency </label></b>
+                            <span class="dashboard_efficiency"><b>:</b> {{item.efficiency_count}} / <b>NPC:</b> {{item.npccps}} = {{item.efficiency}}%
+                                <div class="efficiency_color" style="background-color:{%if item.efficiency>100-item.efficiency_tolarance and item.efficiency<100+item.efficiency_tolarance %} #27ae60 {%elif item.efficiency<=100-item.efficiency_tolarance%} red {%elif item.efficiency>=100+item.efficiency_tolarance%} #3498db {%endif%};"> </div>
+                            </span>
+                        </div>
 
-                <div><label><b>Production effeciency:</b> N/A :: N/A</label></div>
-                <a href="/machine/edit/{{item.mno}}"><button class="btn btn-primary btn-block">
-                    View / edit  
-                  </button></a>
-              </div>
-            
-        </form>
-    </div>
-</div>
-{% endfor %} 
+                        <a href="/machine/edit/{{item.mno}}">
+                            <button class="btn btn-primary btn-block">
+                                View / edit
+                            </button>
+                        </a>
+                  </div>
+            </div>
+          </div>
+        {% endfor %}
     </div>
 </div>
 <script>
@@ -39,6 +64,9 @@
       $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );
       $('#nav_dashboard').addClass( 'active' );
     });
+    setInterval(function() {
+                  window.location.reload();
+    }, 300000);
   </script>
 {% endblock %}
 

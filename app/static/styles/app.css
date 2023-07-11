@@ -17,3 +17,16 @@
     right:120px;
     color:white;
 }
+.efficiency_color{
+    display:inline-block;
+    position: relative;
+    top:4px;
+    margin-left:10px;
+    width:80px;
+    height:20px;
+}
+.dashboard_efficiency{
+    position:relative;
+    top:-10px;
+    left:2px;
+}

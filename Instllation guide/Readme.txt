@@ -24,6 +24,22 @@ create table loginCredentials(
 	role varchar(50) NOT NULL
 );
 
+create table machine_data(
+ 	machine_no VARCHAR(255) NOT NULL primary key,
+	current_count VARCHAR(255) NOT NULL,
+	efficiency int not NULL,
+    efficiency_count varchar(255) not NULL
+)
+
+ALTER TABLE part_master
+ADD efficiency_tolarance int not NULL
+
+ALTER TABLE shift_master
+ADD start_time TIME not NULL,
+ADD end_time TIME not NULL,
+DROP COLUMN stime
+
+
 git link https://github.com/Ktic15/iot
 
 requirement generation

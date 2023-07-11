@@ -23,6 +23,24 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 list_data = []
 table_vs_column=[]
 
+def havingAccess(roleCheck=[], errorMsg="Access Denied. Only "):
+    if 'loggedin' in session:
+        if roleCheck:
+            if session["role"] in roleCheck or "admin"==session["role"] or "it-role"==session["role"]:
+                return True
+            else:
+                return redirect(url_for('errorPage',errorMsg=errorMsg+', '.join(map(str, roleCheck))+", IT Role and admin have the access"))
+        return True
+    return redirect(url_for('login'))
+
+def getCurrentShift():
+      cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+      today = datetime.datetime.now()
+      current_time = today.strftime("%H:%M")
+      s = "SELECT * FROM shift_master WHERE start_time::time <= '{0}' and end_time::time >= '{0}'".format(current_time)
+      cur.execute(s) # Execute the SQL
+      shift_master = cur.fetchall()
+      return shift_master[0][0]
 
 @app.route('/')
 def GhIndex():
@@ -104,16 +122,6 @@ def logout():
     # Redirect to login page
     return redirect(url_for('login'))
 
-def havingAccess(roleCheck=[], errorMsg="Access Denied. Only "):
-    if 'loggedin' in session:
-        if roleCheck:
-            if session["role"] in roleCheck or "admin"==session["role"] or "it-role"==session["role"]:
-                return True
-            else:
-                return redirect(url_for('errorPage',errorMsg=errorMsg+', '.join(map(str, roleCheck))+", IT Role and admin have the access"))
-        return True
-    return redirect(url_for('login'))
-
 @app.route('/error_msg/<errorMsg>')
 def errorPage(errorMsg):
     return render_template('error_msg.html',errorMsg=errorMsg)
@@ -134,7 +142,7 @@ def Svindex():
         s = "SELECT * FROM Part_Master"
         cur.execute(s) # Execute the SQL
         Pitem = cur.fetchall()
-        s = "SELECT * FROM Employee_Master"
+        s = "SELECT * FROM Employee_Master  where employee_designation='Operator'"
         cur.execute(s) # Execute the SQL
         Eitem = cur.fetchall()
         s = "SELECT * FROM Employee_Master where employee_designation='Shift supervisor'"
@@ -189,8 +197,15 @@ def get_operator(sno):
     print(data)
     return render_template('edit_operator.html', operator = data[0])
 
- 
- 
+@app.route('/tool_change')
+def tool_change():
+    return render_template('Tool_Change.html')
+
+@app.route('/machine_stoppage')
+def machine_stoppage():
+    return render_template('Machine_Stoppage.html')
+
+
 @app.post('/view')
 def view():
  
@@ -333,7 +348,8 @@ def add_part():
         proline = request.form['proline']
         npccps = request.form['npccps']
         pdesc = request.form['pdesc']
-        cur.execute("INSERT INTO part_Master (pcode,pdes,cpn,proline,npccps,pdesc) VALUES (%s,%s,%s,%s,%s,%s)", (pcode,pdes,cpn,proline,npccps,pdesc))
+        efficiency_tolarance = request.form['efficiency_tolarance']
+        cur.execute("INSERT INTO part_Master (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance) VALUES (%s,%s,%s,%s,%s,%s,%s)", (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance))
         conn.commit()
         flash('Part Added successfully')
         return redirect(url_for('PIndex'))
@@ -357,6 +373,7 @@ def update_part(pcode):
         proline = request.form['proline']
         npccps = request.form['npccps']
         pdesc = request.form['pdesc']
+        efficiency_tolarance = request.form['efficiency_tolarance']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""
             UPDATE Part_master
@@ -366,9 +383,10 @@ def update_part(pcode):
             cpn = %s,
             proline = %s,
             npccps = %s,
-            pdesc = %s
+            pdesc = %s,
+            efficiency_tolarance = %s
             WHERE pcode = %s
-        """, (pcode,pdes,cpn,proline,npccps,pdesc,pcode))
+        """, (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance,pcode))
         flash('Part Updated Successfully')
         conn.commit()
         return redirect(url_for('PIndex'))
@@ -536,10 +554,12 @@ def add_shift():
     if request.method == 'POST':
         scode = request.form['scode']
         sname = request.form['sname']
-        stime = request.form['stime']
         brlu = request.form['brlu']
-        cur.execute("INSERT INTO Shift_Master (scode,sname,stime,brlu) VALUES (%s,%s,%s,%s)", (scode,sname,stime,brlu))
+        start_time = request.form['start_time']
+        end_time = request.form['end_time']
+        cur.execute("INSERT INTO Shift_Master (scode,sname,brlu,start_time,end_time) VALUES (%s,%s,%s,%s,%s)", (scode,sname,brlu,start_time,end_time))
         conn.commit()
+        cur.close()
         flash('Shift Added successfully')
         return redirect(url_for('SIndex'))
  
@@ -558,7 +578,8 @@ def update_shift(scode):
     if request.method == 'POST':
         scode = request.form['scode']
         sname = request.form['sname']
-        stime = request.form['stime']
+        start_time = request.form['start_time']
+        end_time = request.form['end_time']
         brlu = request.form['brlu']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute("""
@@ -566,10 +587,11 @@ def update_shift(scode):
             SET 
             scode = %s,
             sname = %s,
-            stime = %s,
-            brlu = %s
+            brlu = %s,
+            start_time = %s,
+            end_time = %s
             WHERE scode = %s
-        """, (scode,sname,stime,brlu,scode))
+        """, (scode,sname,brlu,start_time,end_time,scode))
         flash('Shift Updated Successfully')
         conn.commit()
         return redirect(url_for('SIndex'))
@@ -645,10 +667,18 @@ def delete_product_line(pcode):
 def DbIndex():
     if(havingAccess()==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        s = "SELECT * FROM Machine_Master"
+        #s ="SELECT * FROM Machine_Master"
+        s = "SELECT * FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN machine_data ON machine_operator.machine_no=machine_data.machine_no"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
-        return render_template('Dashboard.html', list_machine = list_users)
+
+        #operator vs machine vs current shift details
+        #currentShift = getCurrentShift()
+        #s = "SELECT * FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code WHERE machine_operator.shift=\'"+str(currentShift)+"\'"
+        #cur.execute(s) # Execute the SQL
+        #operator_details = cur.fetchall()
+
+        return render_template('Dashboard.html', list_machine = list_users,currentShift=currentShift,operator_details=operator_details)
     return havingAccess()
 
 @app.route('/datahub')
@@ -662,7 +692,7 @@ def DhIndex():
 
 @app.route('/manage')
 def manage():
-    return redirect("/operator_assignment");
+    return redirect("/operator_assignment")
 
 @app.route('/report', methods=['POST','GET'])
 def RIndex():
