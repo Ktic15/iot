@@ -253,14 +253,14 @@ def view():
 
 @app.route('/employee')
 def EIndex():
-    if(havingAccess(["hr"])==True):
+    if(havingAccess(["hr","supervisor"])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Employee_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         return render_template('Employee_Master.html', list_users = list_users)
     else:
-        return havingAccess(["hr"])
+        return havingAccess(["hr","supervisor"])
 
 @app.route('/add_Employee', methods=['POST'])
 def add_Employee():
@@ -749,4 +749,5 @@ def RIndex():
     return havingAccess()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0")
+cmd

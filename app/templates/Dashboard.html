@@ -17,7 +17,7 @@
 <div class="container-fluid" style="margin:0%;padding:1% 2%;">
     <div class="row" >
         {% for item in list_machine %}
-        <div class="col-lg-4"style="padding: 5px;">
+        <div class="col-lg-3"style="padding: 5px;">
             <div class="card card-body" >
                 <div class="form-group">
                     <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
@@ -45,16 +45,16 @@
                         <label>
                             <b>count:</b>
                             {%if item.current_count%}
-                            {{item.current_count}}
+                            {{item.current_count}} / {{item.npccps}}
                             {%else%}
                             No data
                             {%endif%}
                         </label>
                     </div>
                     <div>
-                        <label><b>Production <br>efficiency </label></b>
-                        <span class="dashboard_efficiency"><b>:</b> {{item.efficiency_count}} / <b>NPC:</b> {{item.npccps}} = {{item.efficiency}}%
-                                <div class="efficiency_color" style="background-color:{%if item.efficiency>100-item.efficiency_tolarance and item.efficiency<100+item.efficiency_tolarance %} #27ae60 {%elif item.efficiency<=100-item.efficiency_tolarance%} red {%elif item.efficiency>=100+item.efficiency_tolarance%} #3498db {%endif%};"> </div>
+                        <label><b>Production <br>efficiency </b></label>
+                        <span class="dashboard_efficiency"><b>:</b> {{item.efficiency}}%
+                                <div class="efficiency_color" style="background-color:{%if item.efficiency>100-item.efficiency_tolarance and item.efficiency<100+item.efficiency_tolarance %} #f39c12 {%elif item.efficiency<=100-item.efficiency_tolarance%} red {%elif item.efficiency>=100+item.efficiency_tolarance%} #27ae60 {%endif%};"> </div>
                             </span>
                     </div>
 
