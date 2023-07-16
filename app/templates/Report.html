@@ -16,10 +16,10 @@
 
                 <div class="form-group">
                     <label>Select Employee Master:</label><br>
-                        {% for temp in employee_master %}
-                        <input type="checkbox" id="employee_master.{{temp[0]}}" name="employee_master.{{temp[0]}}" value="employee_master">
-                        <label> {{temp[0]}}</label><br>
-                        {% endfor %}
+                    {% for temp in employee_master %}
+                    <input type="checkbox" id="employee_master.{{temp[0]}}" name="employee_master.{{temp[0]}}" value="employee_master">
+                    <label> {{temp[0]}}</label><br>
+                    {% endfor %}
                 </div>
 
                 <div class="form-group">
@@ -34,6 +34,13 @@
                     <label>Select Machine Operator:</label><br>
                     {% for temp in machine_operator %}
                     <input type="checkbox" id="machine_operator.{{temp[0]}}" name="machine_operator.{{temp[0]}}" value="machine_operator">
+                    <label for="{{temp[0]}}"> {{temp[0]}}</label><br>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label>Select Machine data:</label><br>
+                    {% for temp in machine_data %}
+                    <input type="checkbox" id="machine_data.{{temp[0]}}" name="machine_data.{{temp[0]}}" value="machine_data">
                     <label for="{{temp[0]}}"> {{temp[0]}}</label><br>
                     {% endfor %}
                 </div>

@@ -673,12 +673,12 @@ def DbIndex():
         list_users = cur.fetchall()
 
         #operator vs machine vs current shift details
-        #currentShift = getCurrentShift()
+        currentShift = getCurrentShift()
         #s = "SELECT * FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code WHERE machine_operator.shift=\'"+str(currentShift)+"\'"
         #cur.execute(s) # Execute the SQL
         #operator_details = cur.fetchall()
 
-        return render_template('Dashboard.html', list_machine = list_users,currentShift=currentShift,operator_details=operator_details)
+        return render_template('Dashboard.html', list_machine = list_users,currentShift=currentShift)#,operator_details=operator_details)
     return havingAccess()
 
 @app.route('/datahub')
@@ -714,7 +714,7 @@ def RIndex():
                 for column in table_vs_column:
                     s+=column+","
                 s=s[0:-1]
-                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno"
+                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN machine_data ON machine_operator.machine_no=machine_data.machine_no"
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
             elif "export" in request.form:
@@ -739,9 +739,14 @@ def RIndex():
         s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
         cur.execute(s) # Execute the SQL
         machine_operator = cur.fetchall()
-        return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
+
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_data\'"
+        cur.execute(s) # Execute the SQL
+        machine_data = cur.fetchall()
+
+        return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_data=machine_data,machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
     # User is not loggedin redirect to login page
     return havingAccess()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0")

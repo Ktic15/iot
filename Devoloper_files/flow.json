@@ -1,0 +1,2775 @@
+[
+    {
+        "id": "67ecf0b68f15fa28",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8415e5f22ef6902b",
+        "type": "tab",
+        "label": "Flow 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1ce336a1f129144e",
+        "type": "tab",
+        "label": "Flow 5",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "10e78a89.5b4fd5",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "127.0.0.1",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "32c7cbdad91c7ac9",
+        "type": "ui_base",
+        "theme": {
+            "name": "theme-dark",
+            "lightTheme": {
+                "default": "#0094CE",
+                "baseColor": "#0094CE",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "darkTheme": {
+                "default": "#097479",
+                "baseColor": "#097479",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+                "edited": true,
+                "reset": false
+            },
+            "customTheme": {
+                "name": "Untitled Theme 1",
+                "default": "#4B7930",
+                "baseColor": "#4B7930",
+                "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+            },
+            "themeState": {
+                "base-color": {
+                    "default": "#097479",
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-titlebar-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "page-backgroundColor": {
+                    "value": "#111111",
+                    "edited": false
+                },
+                "page-sidebar-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "group-textColor": {
+                    "value": "#0eb8c0",
+                    "edited": false
+                },
+                "group-borderColor": {
+                    "value": "#555555",
+                    "edited": false
+                },
+                "group-backgroundColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "widget-textColor": {
+                    "value": "#eeeeee",
+                    "edited": false
+                },
+                "widget-backgroundColor": {
+                    "value": "#097479",
+                    "edited": false
+                },
+                "widget-borderColor": {
+                    "value": "#333333",
+                    "edited": false
+                },
+                "base-font": {
+                    "value": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+                }
+            },
+            "angularTheme": {
+                "primary": "indigo",
+                "accents": "blue",
+                "warn": "red",
+                "background": "grey",
+                "palette": "light"
+            }
+        },
+        "site": {
+            "name": "Node-RED Dashboard",
+            "hideToolbar": "false",
+            "allowSwipe": "false",
+            "lockMenu": "false",
+            "allowTempTheme": "false",
+            "dateFormat": "DD/MM/YYYY",
+            "sizes": {
+                "sx": 48,
+                "sy": 48,
+                "gx": 6,
+                "gy": 6,
+                "cx": 6,
+                "cy": 6,
+                "px": 0,
+                "py": 0
+            }
+        }
+    },
+    {
+        "id": "ca3999bbda16fa64",
+        "type": "ui_link",
+        "name": "Link 4",
+        "icon": "open_in_browser",
+        "target": "newtab",
+        "order": 4
+    },
+    {
+        "id": "e7c46d5e.a1283",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "56c318a112daf728",
+        "type": "ui_tab",
+        "name": "machine 1",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "97d4174cb1ef6df7",
+        "type": "ui_tab",
+        "name": "INPUT",
+        "icon": "dashboard",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "61285987.c20328",
+        "type": "ui_group",
+        "name": "Main",
+        "tab": "56c318a112daf728",
+        "order": 1,
+        "disp": true,
+        "width": "24",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "68898d970c2b2f74",
+        "type": "ui_group",
+        "name": "OPERATOR DETAILS",
+        "tab": "e7c46d5e.a1283",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "14c9ae64821f9c14",
+        "type": "ui_group",
+        "name": "DASHBOARD",
+        "tab": "e7c46d5e.a1283",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "440132531fd6d0da",
+        "type": "ui_group",
+        "name": "Operator details",
+        "tab": "97d4174cb1ef6df7",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "d4d0271a14cb7c81",
+        "type": "postgreSQLConfig",
+        "name": "",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "postgres",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "espmqtt",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "20ae1e52d1eef983",
+        "type": "postgreSQLConfig",
+        "name": "myuser@timescale:5432/iot",
+        "host": "timescale",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "iot",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "myuser",
+        "userFieldType": "str",
+        "password": "???",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "6cd1b10c2b2da121",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 1,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "6bc5167a10312bed",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 2,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "249dcfea7b1d91f1",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "740abb567650b701",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 6,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b4468649bb523646",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 7,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "7ddf5a1146bd4c99",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 8,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "0337410486248546",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 9,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "d6dd316fbbf99f41",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 11,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2ca1ca25cdbf921b",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 12,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "344ab3b23d13e705",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 13,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "be6c5f71f2d9a11b",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 15,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "6d995936286f06ac",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 16,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "218ce8a946eb0ceb",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 17,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "9be7114eb072a1e3",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 18,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "87791fb169a9baec",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 19,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "61d7c3f5cb8f146a",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 20,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "f9e18e06100ff607",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 21,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "bb8d6e528a635094",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 22,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "67b7d97e92796b23",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 23,
+        "width": 8,
+        "height": 1
+    },
+    {
+        "id": "8971c39fe177ed7f",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 24,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "7bd62b5d8ce90ebc",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 26,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "c2748aa0d882d71a",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 28,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "ab1ed3712b69daaf",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 29,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "1daef0812f46ccd2",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 30,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "adb99068657e6308",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 31,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "948ff200ac082938",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 32,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "adb0190dcb5bea7d",
+        "type": "ui_spacer",
+        "z": "8415e5f22ef6902b",
+        "name": "spacer",
+        "group": "61285987.c20328",
+        "order": 33,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "576ae76f9052f852",
+        "type": "postgreSQLConfig",
+        "name": "iot",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "iot-project",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "espmqtt",
+        "passwordFieldType": "str"
+    },
+    {
+        "id": "1b3a3d53585e1dd1",
+        "type": "inject",
+        "z": "f015534da66b50c3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "bb96eb2202d26b01"
+            ]
+        ]
+    },
+    {
+        "id": "14e09bc908e9df4c",
+        "type": "debug",
+        "z": "f015534da66b50c3",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "47f31e9c0ae7465f",
+        "type": "inject",
+        "z": "f015534da66b50c3",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 180,
+        "wires": [
+            [
+                "7450f8d0e9faab72"
+            ]
+        ]
+    },
+    {
+        "id": "58f6fcfc49627676",
+        "type": "debug",
+        "z": "f015534da66b50c3",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "673a157879b26b2f",
+        "type": "debug",
+        "z": "f015534da66b50c3",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "b22de8b2849e392e",
+        "type": "ui_form",
+        "z": "f015534da66b50c3",
+        "name": "",
+        "label": "update employee",
+        "group": "68898d970c2b2f74",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "ID",
+                "value": "ID",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "NAME",
+                "value": "NAME",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "ID": "",
+            "NAME": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": true,
+        "className": "",
+        "x": 310,
+        "y": 380,
+        "wires": [
+            [
+                "3b0f37d2eb659b2f"
+            ]
+        ]
+    },
+    {
+        "id": "ed5861ba0d5df86e",
+        "type": "ui_form",
+        "z": "f015534da66b50c3",
+        "name": "",
+        "label": "",
+        "group": "68898d970c2b2f74",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "ID",
+                "value": "ID",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "NAME",
+                "value": "NAME",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "PRODUCT LINE",
+                "value": "PRODUCT LINE",
+                "type": "text",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "DATE",
+                "value": "DATE",
+                "type": "date",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "MACHINE NO",
+                "value": "MACHINE NO",
+                "type": "text",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "MACHINE NAME",
+                "value": "MACHINE NAME",
+                "type": "text",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "PARTNO",
+                "value": "PARTNO",
+                "type": "text",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "PART DESCRIPTION",
+                "value": "PART DESCRIPTION",
+                "type": "multiline",
+                "required": false,
+                "rows": 3
+            }
+        ],
+        "formValue": {
+            "ID": "",
+            "NAME": "",
+            "PRODUCT LINE": "",
+            "DATE": "",
+            "MACHINE NO": "",
+            "MACHINE NAME": "",
+            "PARTNO": "",
+            "PART DESCRIPTION": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 270,
+        "y": 300,
+        "wires": [
+            [
+                "071162a21e6f33e4"
+            ]
+        ]
+    },
+    {
+        "id": "bb96eb2202d26b01",
+        "type": "postgresql",
+        "z": "f015534da66b50c3",
+        "name": "database",
+        "query": "CREATE TABLE Machinecount (\n\tdateandtime TIMESTAMP PRIMARY KEY,\n    machine1 varchar(10)\n   \n);",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 340,
+        "y": 80,
+        "wires": [
+            [
+                "14e09bc908e9df4c"
+            ]
+        ]
+    },
+    {
+        "id": "7450f8d0e9faab72",
+        "type": "postgresql",
+        "z": "f015534da66b50c3",
+        "name": "database",
+        "query": "CREATE TABLE emp (\n\t\n\tID varchar(10),\n    NAME varchar(25)\n   \n);",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 340,
+        "y": 180,
+        "wires": [
+            [
+                "58f6fcfc49627676"
+            ]
+        ]
+    },
+    {
+        "id": "071162a21e6f33e4",
+        "type": "postgresql",
+        "z": "f015534da66b50c3",
+        "name": "database",
+        "query": "INSERT INTO emp(ID,NAME)\nVALUES\n    ('{{msg.payload.ID}}','{{msg.payload.NAME}}');",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 440,
+        "y": 300,
+        "wires": [
+            [
+                "673a157879b26b2f"
+            ]
+        ]
+    },
+    {
+        "id": "3b0f37d2eb659b2f",
+        "type": "postgresql",
+        "z": "f015534da66b50c3",
+        "name": "database",
+        "query": "UPDATE emp\nSET NAME='{{msg.payload.NAME}}'\nWHERE\n    ID='{{msg.payload.ID}}';",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 500,
+        "y": 380,
+        "wires": [
+            [
+                "673a157879b26b2f"
+            ]
+        ]
+    },
+    {
+        "id": "36d7a2e7.38e4de",
+        "type": "inject",
+        "z": "77185dfdb2645cd9",
+        "name": "Start",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 240,
+        "wires": [
+            [
+                "1b00f74dc3098005"
+            ]
+        ]
+    },
+    {
+        "id": "ee38d447.1c13a8",
+        "type": "debug",
+        "z": "77185dfdb2645cd9",
+        "name": "Done",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "complete",
+        "statusType": "msg",
+        "x": 1130,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "12f229bfef5ad2a5",
+        "type": "function",
+        "z": "77185dfdb2645cd9",
+        "name": "Ready for next lines",
+        "func": "return [\n    msg.complete || msg.abort ? msg : null,\n    { tick: true },\n];\n",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 180,
+        "wires": [
+            [
+                "ee38d447.1c13a8"
+            ],
+            [
+                "1b00f74dc3098005"
+            ]
+        ]
+    },
+    {
+        "id": "178252a8d3c54b16",
+        "type": "function",
+        "z": "77185dfdb2645cd9",
+        "name": "",
+        "func": "let payload = `(0, FALSE),`;\nif (msg.payload && msg.payload.length > 0) {\n    for (const line of msg.payload) {\n        const valid = 'TRUE'; // Call some kind of test\n        payload += `(${line['id']}, ${valid}),`;\n    }\n}\nmsg.payload = payload.slice(0, - 1);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 240,
+        "wires": [
+            [
+                "6d2073ec4db26f2f"
+            ]
+        ]
+    },
+    {
+        "id": "4fd30ba36702842a",
+        "type": "debug",
+        "z": "77185dfdb2645cd9",
+        "name": "Progress",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "parts.index",
+        "statusType": "msg",
+        "x": 860,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "64a657de3954a4b5",
+        "type": "debug",
+        "z": "77185dfdb2645cd9",
+        "name": "Results",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "pgsql.rowCount",
+        "statusType": "msg",
+        "x": 480,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3134bfc0f12e13c3",
+        "type": "inject",
+        "z": "77185dfdb2645cd9",
+        "name": "Start",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 320,
+        "wires": [
+            [
+                "adf069475c5e0ba3"
+            ]
+        ]
+    },
+    {
+        "id": "d04c65ee97e3a273",
+        "type": "inject",
+        "z": "77185dfdb2645cd9",
+        "name": "Prepare",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 140,
+        "wires": [
+            [
+                "82b7c689d6682f72"
+            ]
+        ]
+    },
+    {
+        "id": "c5f0b4b2442e3137",
+        "type": "debug",
+        "z": "77185dfdb2645cd9",
+        "name": "Done",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "pgsql",
+        "statusType": "msg",
+        "x": 470,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "1b00f74dc3098005",
+        "type": "postgresql",
+        "z": "77185dfdb2645cd9",
+        "name": "SELECT many",
+        "query": "SELECT * FROM mytable\nORDER BY id ASC\nLIMIT 2000;\n",
+        "postgreSQLConfig": "20ae1e52d1eef983",
+        "split": true,
+        "rowsPerMsg": "100",
+        "outputs": 1,
+        "x": 300,
+        "y": 240,
+        "wires": [
+            [
+                "178252a8d3c54b16"
+            ]
+        ]
+    },
+    {
+        "id": "6d2073ec4db26f2f",
+        "type": "postgresql",
+        "z": "77185dfdb2645cd9",
+        "name": "UPDATE many",
+        "query": "UPDATE mytable AS c\nSET validity = v.validity\nFROM (VALUES\n\t{{{ msg.payload }}}\n) AS v (id, validity)\nWHERE v.id = c.id;\n",
+        "postgreSQLConfig": "20ae1e52d1eef983",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 660,
+        "y": 240,
+        "wires": [
+            [
+                "12f229bfef5ad2a5",
+                "4fd30ba36702842a"
+            ]
+        ]
+    },
+    {
+        "id": "adf069475c5e0ba3",
+        "type": "postgresql",
+        "z": "77185dfdb2645cd9",
+        "name": "SELECT",
+        "query": "SELECT * FROM mytable\nWHERE id < 100;\n",
+        "postgreSQLConfig": "20ae1e52d1eef983",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 280,
+        "y": 320,
+        "wires": [
+            [
+                "64a657de3954a4b5"
+            ]
+        ]
+    },
+    {
+        "id": "82b7c689d6682f72",
+        "type": "postgresql",
+        "z": "77185dfdb2645cd9",
+        "name": "ADD COLUMN",
+        "query": "ALTER TABLE mytable\n    DROP COLUMN IF EXISTS validity;\n\nALTER TABLE mytable\n    ADD COLUMN validity BOOLEAN;\n",
+        "postgreSQLConfig": "20ae1e52d1eef983",
+        "split": false,
+        "rowsPerMsg": "10",
+        "outputs": 1,
+        "x": 300,
+        "y": 140,
+        "wires": [
+            [
+                "c5f0b4b2442e3137"
+            ]
+        ]
+    },
+    {
+        "id": "2718d487fd8be432",
+        "type": "mqtt in",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "topic": "machine1",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "10e78a89.5b4fd5",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "c2ca560b532f42d1",
+                "f4ec0d41ec695282",
+                "36dc1201b6cc50b3"
+            ]
+        ]
+    },
+    {
+        "id": "36fd1dfc43f964da",
+        "type": "debug",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 430,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "f4ec0d41ec695282",
+        "type": "function",
+        "z": "67ecf0b68f15fa28",
+        "name": "set count for m1",
+        "func": "global.set(\"machine1\", msg.payload);\nvar date= new Date;\nvar times = date.getTime();\nglobal.set(\"time\",times);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 280,
+        "wires": [
+            [
+                "fc92871ab73d76ca"
+            ]
+        ]
+    },
+    {
+        "id": "0ace0aee7349608b",
+        "type": "mqtt out",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "topic": "machine1/operation",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "10e78a89.5b4fd5",
+        "x": 570,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "2848e32772f2321d",
+        "type": "function",
+        "z": "67ecf0b68f15fa28",
+        "name": "function 4",
+        "func": "global.set(\"machine1\", 0);\n\nmsg.payload='0';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 500,
+        "wires": [
+            [
+                "8013a55aefe360c5"
+            ]
+        ]
+    },
+    {
+        "id": "40bbfe392c373d72",
+        "type": "inject",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 560,
+        "wires": [
+            [
+                "8b62bb333c393f9b"
+            ]
+        ]
+    },
+    {
+        "id": "8b62bb333c393f9b",
+        "type": "function",
+        "z": "67ecf0b68f15fa28",
+        "name": "function 5",
+        "func": "msg.topic=\"gv\";\nmsg.payload=global.get(\"machine1\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 560,
+        "wires": [
+            [
+                "7ef5c69ddb955292"
+            ]
+        ]
+    },
+    {
+        "id": "7ef5c69ddb955292",
+        "type": "debug",
+        "z": "67ecf0b68f15fa28",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "ef3bf6d458276273",
+        "type": "inject",
+        "z": "67ecf0b68f15fa28",
+        "name": "start",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 130,
+        "y": 40,
+        "wires": [
+            [
+                "84ad9f5e6d79b475"
+            ]
+        ]
+    },
+    {
+        "id": "84ad9f5e6d79b475",
+        "type": "function",
+        "z": "67ecf0b68f15fa28",
+        "name": "function 6",
+        "func": "global.set(\"machine1\",0)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3b7d17d912c2ca0d",
+        "type": "function",
+        "z": "67ecf0b68f15fa28",
+        "name": "set count for m1",
+        "func": "msg.payload=global.get(\"machine1\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 100,
+        "wires": [
+            [
+                "6baa19f4cb46dd4a"
+            ]
+        ]
+    },
+    {
+        "id": "8013a55aefe360c5",
+        "type": "mqtt out",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "topic": "machine1",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "10e78a89.5b4fd5",
+        "x": 520,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "fc92871ab73d76ca",
+        "type": "debug",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 510,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "64893b44fedf8d66",
+        "type": "ui_button",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "group": "61285987.c20328",
+        "order": 14,
+        "width": 4,
+        "height": 1,
+        "passthru": false,
+        "label": "reset count",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "reset count",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 480,
+        "wires": [
+            [
+                "0ace0aee7349608b",
+                "2848e32772f2321d"
+            ]
+        ]
+    },
+    {
+        "id": "49d2c4c11432a1ee",
+        "type": "ui_text",
+        "z": "67ecf0b68f15fa28",
+        "group": "61285987.c20328",
+        "order": 5,
+        "width": 7,
+        "height": 1,
+        "name": "",
+        "label": "Name",
+        "format": "{{msg.payload[0].name}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 470,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "6baa19f4cb46dd4a",
+        "type": "ui_text",
+        "z": "67ecf0b68f15fa28",
+        "group": "61285987.c20328",
+        "order": 10,
+        "width": 7,
+        "height": 1,
+        "name": "",
+        "label": "product count",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 700,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "c2ca560b532f42d1",
+        "type": "ui_chart",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "group": "61285987.c20328",
+        "order": 4,
+        "width": 15,
+        "height": 8,
+        "label": "Machine 1",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 430,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "36dc1201b6cc50b3",
+        "type": "postgresql",
+        "z": "67ecf0b68f15fa28",
+        "name": "OPERATOR",
+        "query": "SELECT NAME FROM emp where ID='001' ;",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 250,
+        "y": 100,
+        "wires": [
+            [
+                "36fd1dfc43f964da",
+                "49d2c4c11432a1ee",
+                "3b7d17d912c2ca0d"
+            ]
+        ]
+    },
+    {
+        "id": "da9e3b7540e63946",
+        "type": "mqtt out",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "topic": "machine1",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "10e78a89.5b4fd5",
+        "x": 400,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "15acf604c0fd6750",
+        "type": "function",
+        "z": "67ecf0b68f15fa28",
+        "name": "function 11",
+        "func": "global.set(\"machine1\", 3916);\n\nmsg.payload='3916';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 220,
+        "y": 700,
+        "wires": [
+            [
+                "da9e3b7540e63946"
+            ]
+        ]
+    },
+    {
+        "id": "555249c0cc1be037",
+        "type": "inject",
+        "z": "67ecf0b68f15fa28",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 660,
+        "wires": [
+            [
+                "15acf604c0fd6750"
+            ]
+        ]
+    },
+    {
+        "id": "6dc36e09b09aa063",
+        "type": "postgresql",
+        "z": "8415e5f22ef6902b",
+        "name": "database",
+        "query": "CREATE TABLE m1count (\n\tdateandtime varchar(25) PRIMARY KEY,\n    machine1 varchar(10)\n   \n);",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 280,
+        "y": 120,
+        "wires": [
+            [
+                "9d6e0c6b7a340152"
+            ]
+        ]
+    },
+    {
+        "id": "e1b63e358b3b0105",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 120,
+        "wires": [
+            [
+                "6dc36e09b09aa063"
+            ]
+        ]
+    },
+    {
+        "id": "9d6e0c6b7a340152",
+        "type": "debug",
+        "z": "8415e5f22ef6902b",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "f08a1d71729e5602",
+        "type": "postgresql",
+        "z": "8415e5f22ef6902b",
+        "name": "database",
+        "query": "INSERT INTO m1count(dateandtime,machine1)\nVALUES\n    ($1,$2);",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 460,
+        "y": 240,
+        "wires": [
+            [
+                "3b7fa86d004841f7"
+            ]
+        ]
+    },
+    {
+        "id": "5b7440a4e54e7031",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 60,
+        "y": 240,
+        "wires": [
+            [
+                "359bbafb96b829f8"
+            ]
+        ]
+    },
+    {
+        "id": "3b7fa86d004841f7",
+        "type": "debug",
+        "z": "8415e5f22ef6902b",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "359bbafb96b829f8",
+        "type": "function",
+        "z": "8415e5f22ef6902b",
+        "name": "function 8",
+        "func": "var t= new Date();\nvar count= global.get(\"machine1\");\n//global.set(\"machine1\",count);\nmsg.params=[t.toLocaleString(),count];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 240,
+        "y": 240,
+        "wires": [
+            [
+                "f08a1d71729e5602"
+            ]
+        ]
+    },
+    {
+        "id": "35a4de47d8f96a3e",
+        "type": "postgresql",
+        "z": "8415e5f22ef6902b",
+        "name": "database",
+        "query": "Select LAST_VALUE (\"count\") over(order by \"dateandtime\" desc) AS y, \"dateandtime\" as x from w10;",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 260,
+        "y": 500,
+        "wires": [
+            [
+                "72cc7671f1967097",
+                "bc328d4494a7b78f"
+            ]
+        ]
+    },
+    {
+        "id": "34da3476c32e09c8",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "15",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 500,
+        "wires": [
+            [
+                "35a4de47d8f96a3e"
+            ]
+        ]
+    },
+    {
+        "id": "72cc7671f1967097",
+        "type": "function",
+        "z": "8415e5f22ef6902b",
+        "name": "function 9",
+        "func": "\nmsg.payload=[{\n    \"series\":[\"A\"],\n    \"data\":[msg.payload],\n    \"lables\":[\"\"]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 440,
+        "wires": [
+            [
+                "6194e238dd9ffbd4"
+            ]
+        ]
+    },
+    {
+        "id": "6194e238dd9ffbd4",
+        "type": "ui_chart",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "group": "61285987.c20328",
+        "order": 25,
+        "width": 13,
+        "height": 7,
+        "label": "chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "86400",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 570,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bc328d4494a7b78f",
+        "type": "ui_table",
+        "z": "8415e5f22ef6902b",
+        "group": "61285987.c20328",
+        "name": "",
+        "order": 27,
+        "width": 9,
+        "height": 7,
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 430,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "4c3e2bcba50e255a",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 60,
+        "wires": [
+            [
+                "56b9209d4358b1ba"
+            ]
+        ]
+    },
+    {
+        "id": "56b9209d4358b1ba",
+        "type": "function",
+        "z": "8415e5f22ef6902b",
+        "name": "function 10",
+        "func": "msg.payload=global.get(\"machine1\");\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 60,
+        "wires": [
+            [
+                "371cd2fea203686b"
+            ]
+        ]
+    },
+    {
+        "id": "371cd2fea203686b",
+        "type": "debug",
+        "z": "8415e5f22ef6902b",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "af79264c09f2baa2",
+        "type": "function",
+        "z": "8415e5f22ef6902b",
+        "name": "function 15",
+        "func": "var t= new Date();\nvar count= global.get(\"machine1\");\n//global.set(\"machine1\",count);\nmsg.params=[t.toLocaleString(),count];\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 320,
+        "wires": [
+            [
+                "e1fc1f0baa0b194e"
+            ]
+        ]
+    },
+    {
+        "id": "dd63603ea59371ad",
+        "type": "debug",
+        "z": "8415e5f22ef6902b",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 750,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "e1fc1f0baa0b194e",
+        "type": "postgresql",
+        "z": "8415e5f22ef6902b",
+        "name": "database",
+        "query": "INSERT INTO w10(dateandtime,count,status)\nVALUES\n    ($1,$2,'active');",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 570,
+        "y": 320,
+        "wires": [
+            [
+                "dd63603ea59371ad"
+            ]
+        ]
+    },
+    {
+        "id": "be779c41f5316868",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 6-13 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "af79264c09f2baa2"
+            ]
+        ]
+    },
+    {
+        "id": "32a7611b435907d7",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 14-21 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 280,
+        "wires": [
+            [
+                "af79264c09f2baa2"
+            ]
+        ]
+    },
+    {
+        "id": "8a1212611dc9c7ba",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 22-23 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 320,
+        "wires": [
+            [
+                "af79264c09f2baa2"
+            ]
+        ]
+    },
+    {
+        "id": "f2eae041f5c21f0c",
+        "type": "inject",
+        "z": "8415e5f22ef6902b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 0-5 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 360,
+        "wires": [
+            [
+                "af79264c09f2baa2"
+            ]
+        ]
+    },
+    {
+        "id": "6b9a9603f2173cdd",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 360,
+        "wires": [
+            [
+                "28f073a806f1666d"
+            ]
+        ]
+    },
+    {
+        "id": "28f073a806f1666d",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 10",
+        "func": "var Mcount = global.get(\"machine1\")-global.get(\"machine1_\");\nvar npc = (global.get(\"machine1_npc\"))/(8*12);\nvar lcount = parseInt(global.get(\"lcount\"));\nvar c_count = parseInt(global.get(\"c_count\"));\nvar eff =0;\nvar effs=\"0\";\nif(lcount!=0)\n{  npc=npc*lcount;\n    eff = Mcount / npc;\n    effs=\"\"+(eff*100);\n}\nlcount+=1;\nglobal.set(\"lcount\",lcount);\nmsg.payload1=Mcount;\nmsg.payload2=effs;\nmsg.payload3 =(Mcount-c_count)*8*12;\nglobal.set(\"c_count\",Mcount);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 460,
+        "wires": [
+            [
+                "a9e9009437359289",
+                "b5698e7fa1327807"
+            ]
+        ]
+    },
+    {
+        "id": "256d82998dda7fa6",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 06 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 40,
+        "wires": [
+            [
+                "e90f5d9cfc8e0b90"
+            ]
+        ]
+    },
+    {
+        "id": "e90f5d9cfc8e0b90",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 11",
+        "func": "global.set(\"lcount\",0);\nglobal.set(\"c_count\", 0);\nglobal.set(\"machine1_\", global.get(\"machine1\"));\nglobal.set(\"machine_no\",'W10')\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 310,
+        "y": 40,
+        "wires": [
+            [
+                "1dfb672d7b24e8e4"
+            ]
+        ]
+    },
+    {
+        "id": "a77032a76d037d1f",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 12",
+        "func": "global.set(\"machine1\", 0);\n\nmsg.payload='0';\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 140,
+        "wires": [
+            [
+                "75efecc01f1444a6"
+            ]
+        ]
+    },
+    {
+        "id": "174658c5d89f13f1",
+        "type": "mqtt out",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "topic": "machine1/operation",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "10e78a89.5b4fd5",
+        "x": 680,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "75efecc01f1444a6",
+        "type": "mqtt out",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "topic": "machine1",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "10e78a89.5b4fd5",
+        "x": 630,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "1dfb672d7b24e8e4",
+        "type": "postgresql",
+        "z": "1ce336a1f129144e",
+        "name": "get part",
+        "query": "SELECT part_no FROM machine_operator where machine_no='W10' ORDER BY sno DESC LIMIT 1;",
+        "postgreSQLConfig": "d4d0271a14cb7c81",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 280,
+        "y": 280,
+        "wires": [
+            [
+                "75c626a255df9024"
+            ]
+        ]
+    },
+    {
+        "id": "e6e1a2f5d08b8aec",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 240,
+        "wires": [
+            [
+                "1dfb672d7b24e8e4"
+            ]
+        ]
+    },
+    {
+        "id": "d79f91ad92e0887b",
+        "type": "debug",
+        "z": "1ce336a1f129144e",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "75c626a255df9024",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 13",
+        "func": "msg.payload=msg.payload[0].part_no;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 240,
+        "wires": [
+            [
+                "0a9ef1e3fb8b9ad1"
+            ]
+        ]
+    },
+    {
+        "id": "0a9ef1e3fb8b9ad1",
+        "type": "postgresql",
+        "z": "1ce336a1f129144e",
+        "name": "get npc",
+        "query": "SELECT npccps FROM part_master where pcode='{{msg.payload}}';",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 540,
+        "y": 300,
+        "wires": [
+            [
+                "25a4e38d26be7725"
+            ]
+        ]
+    },
+    {
+        "id": "25a4e38d26be7725",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 14",
+        "func": "msg.payload=parseInt(msg.payload[0].npccps);\nglobal.set(\"machine1_npc\",msg.payload);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 240,
+        "wires": [
+            [
+                "d79f91ad92e0887b"
+            ]
+        ]
+    },
+    {
+        "id": "a9e9009437359289",
+        "type": "postgresql",
+        "z": "1ce336a1f129144e",
+        "name": "database",
+        "query": "UPDATE machine_data\nSET\tcurrent_count='{{msg.payload1}}',\n    efficiency= {{{msg.payload2}}},\n    efficiency_count='{{msg.payload3}}'\nWHERE\n    machine_no='W10'\nRETURNING *;",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 560,
+        "y": 480,
+        "wires": [
+            [
+                "e0a5a5e4b22964e1"
+            ]
+        ]
+    },
+    {
+        "id": "e0a5a5e4b22964e1",
+        "type": "debug",
+        "z": "1ce336a1f129144e",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "f0d3b4013e685b56",
+        "type": "postgresql",
+        "z": "1ce336a1f129144e",
+        "name": "database",
+        "query": "INSERT INTO machine_data\n\t(machine_no, current_count, efficiency,efficiency_count)\nVALUES\n    ('W10','100',80,'20');",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 300,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b5698e7fa1327807",
+        "type": "debug",
+        "z": "1ce336a1f129144e",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload2",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "8594d42ed7389812",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 16",
+        "func": "var count =global.get(\"machine1\");\nglobal.set(\"machine1\", count+20);\n\nmsg.payload = '' + (count + 20);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 580,
+        "wires": [
+            [
+                "49b411234591bdd5"
+            ]
+        ]
+    },
+    {
+        "id": "49b411234591bdd5",
+        "type": "mqtt out",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "topic": "machine1",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "10e78a89.5b4fd5",
+        "x": 510,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "a378834e8f00d5c5",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 580,
+        "wires": [
+            [
+                "8594d42ed7389812"
+            ]
+        ]
+    },
+    {
+        "id": "c67eb477cbcc989d",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 17",
+        "func": "var count =global.get(\"machine1\");\nglobal.set(\"machine1\", count+15);\n\nmsg.payload = '' + (count + 15);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 640,
+        "wires": [
+            [
+                "49b411234591bdd5"
+            ]
+        ]
+    },
+    {
+        "id": "2c92e4879fc82278",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 120,
+        "y": 640,
+        "wires": [
+            [
+                "c67eb477cbcc989d"
+            ]
+        ]
+    },
+    {
+        "id": "764639c0c248c0e0",
+        "type": "function",
+        "z": "1ce336a1f129144e",
+        "name": "function 18",
+        "func": "var count =global.get(\"machine1\");\nglobal.set(\"machine1\", count+25);\n\nmsg.payload = '' + (count + 25);\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 250,
+        "y": 720,
+        "wires": [
+            [
+                "49b411234591bdd5"
+            ]
+        ]
+    },
+    {
+        "id": "39a1175780b78726",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 700,
+        "wires": [
+            [
+                "764639c0c248c0e0"
+            ]
+        ]
+    },
+    {
+        "id": "1e27036061d7d0f9",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 6-13 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 520,
+        "wires": [
+            [
+                "28f073a806f1666d"
+            ]
+        ]
+    },
+    {
+        "id": "f9f13d496ca1d89d",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 14-21 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 400,
+        "wires": [
+            [
+                "28f073a806f1666d"
+            ]
+        ]
+    },
+    {
+        "id": "a56c84d0ef11cd96",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 22-23 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "28f073a806f1666d"
+            ]
+        ]
+    },
+    {
+        "id": "588111a53c650202",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/5 0-5 * * *",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 480,
+        "wires": [
+            [
+                "28f073a806f1666d"
+            ]
+        ]
+    },
+    {
+        "id": "8a7f85a29bd070c1",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 14 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 80,
+        "wires": [
+            [
+                "e90f5d9cfc8e0b90"
+            ]
+        ]
+    },
+    {
+        "id": "4a928bd510f5f962",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 22 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "e90f5d9cfc8e0b90"
+            ]
+        ]
+    },
+    {
+        "id": "5bac46de9d0a51a1",
+        "type": "inject",
+        "z": "1ce336a1f129144e",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 100,
+        "y": 160,
+        "wires": [
+            [
+                "e90f5d9cfc8e0b90"
+            ]
+        ]
+    }
+]

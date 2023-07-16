@@ -17,45 +17,55 @@
 <div class="container-fluid" style="margin:0%;padding:1% 2%;">
     <div class="row" >
         {% for item in list_machine %}
-          <div class="col-lg-3"style="padding: 5px;">
+        <div class="col-lg-4"style="padding: 5px;">
             <div class="card card-body" >
-                    <div class="form-group">
-                        <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
-                        <div>
-                            <label>
-                                <b>Operator Name:</b>
-                                {%if item.employee_code%}
-                                    {{item.employee_code}}/{{item.employee_name}}
-                                {%else%}
-                                    Not yet Assigned
-                                {%endif%}
-                            </label>
-                        </div>
-                        <div>
-                            <label>
-                                <b>count:</b>
-                                {%if item.current_count%}
-                                    {{item.current_count}}
-                                {%else%}
-                                    No data
-                                {%endif%}
-                            </label>
-                        </div>
-                        <div>
-                            <label><b>Production <br>efficiency </label></b>
-                            <span class="dashboard_efficiency"><b>:</b> {{item.efficiency_count}} / <b>NPC:</b> {{item.npccps}} = {{item.efficiency}}%
+                <div class="form-group">
+                    <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
+                    <div>
+                        <label>
+                            <b>Operator Name:</b>
+                            {%if item.employee_code%}
+                            {{item.employee_code}}/{{item.employee_name}}
+                            {%else%}
+                            Not yet Assigned
+                            {%endif%}
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <b>Part:</b>
+                            {%if item.pcode%}
+                            {{item.pcode}} / {{item.pdes}}
+                            {%else%}
+                            No data
+                            {%endif%}
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <b>count:</b>
+                            {%if item.current_count%}
+                            {{item.current_count}}
+                            {%else%}
+                            No data
+                            {%endif%}
+                        </label>
+                    </div>
+                    <div>
+                        <label><b>Production <br>efficiency </label></b>
+                        <span class="dashboard_efficiency"><b>:</b> {{item.efficiency_count}} / <b>NPC:</b> {{item.npccps}} = {{item.efficiency}}%
                                 <div class="efficiency_color" style="background-color:{%if item.efficiency>100-item.efficiency_tolarance and item.efficiency<100+item.efficiency_tolarance %} #27ae60 {%elif item.efficiency<=100-item.efficiency_tolarance%} red {%elif item.efficiency>=100+item.efficiency_tolarance%} #3498db {%endif%};"> </div>
                             </span>
-                        </div>
+                    </div>
 
-                        <a href="/machine/edit/{{item.mno}}">
-                            <button class="btn btn-primary btn-block">
-                                View / edit
-                            </button>
-                        </a>
-                  </div>
+                    <a href="/machine/edit/{{item.mno}}">
+                        <button class="btn btn-primary btn-block">
+                            View / edit
+                        </button>
+                    </a>
+                </div>
             </div>
-          </div>
+        </div>
         {% endfor %}
     </div>
 </div>
