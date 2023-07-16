@@ -39,6 +39,18 @@ ADD start_time TIME not NULL,
 ADD end_time TIME not NULL,
 DROP COLUMN stime
 
+_new_
+
+ALTER TABLE machine_master
+ADD mm_efficiency int not NULL
+
+ALTER TABLE employee_master
+ADD em_efficiency int not NULL
+
+ALTER TABLE machine_operator
+ADD mo_efficiency int not NULL,
+ADD mo_count int not NULL
+UPDATE machine_operator SET  mo_efficiency= 100,mo_count= 22;(this line is to put fake data)
 
 git link https://github.com/Ktic15/iot
 
