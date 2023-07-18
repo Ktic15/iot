@@ -667,18 +667,53 @@ def delete_product_line(pcode):
 def DbIndex():
     if(havingAccess()==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        #s ="SELECT * FROM Machine_Master"
-        s = "SELECT * FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN machine_data ON machine_operator.machine_no=machine_data.machine_no"
+        s = "SELECT * FROM machine_master INNER JOIN machine_data ON machine_master.mno=machine_data.machine_no"
         cur.execute(s) # Execute the SQL
-        list_users = cur.fetchall()
+        machine_list = cur.fetchall()
 
-        #operator vs machine vs current shift details
         currentShift = getCurrentShift()
-        #s = "SELECT * FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code WHERE machine_operator.shift=\'"+str(currentShift)+"\'"
-        #cur.execute(s) # Execute the SQL
-        #operator_details = cur.fetchall()
 
-        return render_template('Dashboard.html', list_machine = list_users,currentShift=currentShift)#,operator_details=operator_details)
+
+
+        dashboard_machine_data = []
+        for machine in machine_list:
+            machine_details={}
+            machine_details["mname"] = machine["mname"]
+            machine_details["mno"] = machine["mno"]
+            machine_details["current_count"] = machine["current_count"]
+            machine_details["efficiency"] = machine["efficiency"]
+            machine_details["efficiency_tolarance"] = 5
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            s = "SELECT * FROM machine_operator INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code where machine_operator.shift=\'"+str(currentShift)+"\' AND machine_operator.machine_no=\'"+machine["mno"]+"\' AND machine_operator.date_=current_date"
+            cur.execute(s) # Execute the SQL
+            users_parts_list_for_machine = cur.fetchall()
+            for list_details in users_parts_list_for_machine:
+                machine_details["employee_code"] = list_details["employee_code"]
+                machine_details["employee_name"] = list_details["employee_name"]
+                machine_details["pcode"] = list_details["pcode"]
+                machine_details["pdes"] = list_details["pdes"]
+                machine_details["npccps"] = list_details["npccps"]
+                machine_details["efficiency_tolarance"] = list_details["efficiency_tolarance"]
+            dashboard_machine_data.append(machine_details)
+        dashboard_machine_data.extend(dashboard_machine_data)
+        dashboard_machine_data.extend(dashboard_machine_data)
+        dashboard_machine_data.extend(dashboard_machine_data)
+        dashboard_machine_data.extend(dashboard_machine_data)
+        dashboard_machine_data_split=[]
+        dashboard_machine_data_container=[]
+        max_per_page=12
+        count=0
+        for data in dashboard_machine_data:
+            dashboard_machine_data_container.append(data)
+            count+=1
+            if count==12:
+                count=0
+                dashboard_machine_data_split.append(dashboard_machine_data_container)
+                dashboard_machine_data_container=[]
+        dashboard_machine_data_split.append(dashboard_machine_data_container)
+        page_count = len(dashboard_machine_data_split)
+        print(len(dashboard_machine_data_split))
+        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count)
     return havingAccess()
 
 @app.route('/datahub')
@@ -702,6 +737,10 @@ def RIndex():
         global list_data
         global table_vs_column
         status = ""
+        #app.logger.warning('testing warning log')
+        #app.logger.error('testing error log')
+        #app.logger.info('testing info log')
+        #print('Hi', flush=True)
         if request.method == 'POST':
             if "save" in request.form:
                 list_data = []
