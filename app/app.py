@@ -7,6 +7,9 @@ from psycopg2 import extras
 import datetime
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
+import threading
+import time
+
 
 app = Flask(__name__)
 app.secret_key = "cairocoders-ednalan"
@@ -22,6 +25,10 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 # Global variables
 list_data = []
 table_vs_column=[]
+previousShift=1
+previousShiftDate=1
+
+
 
 def havingAccess(roleCheck=[], errorMsg="Access Denied. Only "):
     if 'loggedin' in session:
@@ -41,6 +48,29 @@ def getCurrentShift():
       cur.execute(s) # Execute the SQL
       shift_master = cur.fetchall()
       return shift_master[0][0]
+
+def loop():
+    global previousShift
+    global previousShiftDate
+    while(True):
+        currentShift = int(getCurrentShift())
+        if(previousShift!=currentShift):
+            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            s = "SELECT * FROM machine_data"
+            cur.execute(s) # Execute the SQL mo_efficiency mo_count
+            machine_datas = cur.fetchall()
+
+            for machine_data in machine_datas:
+                s="UPDATE machine_operator SET  mo_efficiency="+int(machine_data["efficiency"]) +",mo_count="+int(machine_data["current_count"]) +" where date_=\'"+previousShiftDate+"\' AND shift=\'"+previousShift+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'";
+                cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                opitems = cur.fetchall()
+
+            previousShift=currentShift
+            previousShiftDate=datetime.datetime.now().strftime("%d-%m-%y")
+    time.sleep(60*5)
+
+x = threading.Thread(target=loop)
+x.start()
 
 @app.route('/')
 def GhIndex():
@@ -731,6 +761,7 @@ def manage():
 
 @app.route('/report', methods=['POST','GET'])
 def RIndex():
+    return  redirect("/employees_report")
     # Check if user is loggedin
     if(havingAccess()==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -784,6 +815,64 @@ def RIndex():
         machine_data = cur.fetchall()
 
         return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_data=machine_data,machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
+    # User is not loggedin redirect to login page
+    return havingAccess()
+
+@app.route('/employees_report', methods=['POST','GET'])
+def employees_report():
+    # Check if user is loggedin
+    if(havingAccess()==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        global list_data
+        global table_vs_column
+        status = ""
+        #app.logger.warning('testing warning log')
+        #app.logger.error('testing error log')
+        #app.logger.info('testing info log')
+        #print('Hi', flush=True)
+        if request.method == 'POST':
+            if "save" in request.form:
+                list_data = []
+                table_vs_column=[]
+                for selected_column in request.form:
+                    if selected_column!="save":
+                        table_vs_column.append(selected_column)
+
+                s = "SELECT "
+                for column in table_vs_column:
+                    s+=column+","
+                s=s[0:-1]
+                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN machine_data ON machine_operator.machine_no=machine_data.machine_no"
+                cur.execute(s) # Execute the SQL
+                list_data = cur.fetchall()
+            elif "export" in request.form:
+                if list_data!=[]:
+                    df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=table_vs_column)
+                    df.to_excel('Reports/report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]+".xlsx", sheet_name='sheet 1')
+                    status="export success"
+                else:
+                    status="No date to export"
+            if "reset" in request.form:
+                list_data = []
+                table_vs_column=[]
+
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
+        cur.execute(s) # Execute the SQL
+        employee_master = cur.fetchall()
+
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_master\'"
+        cur.execute(s) # Execute the SQL
+        machine_master = cur.fetchall()
+
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
+        cur.execute(s) # Execute the SQL
+        machine_operator = cur.fetchall()
+
+        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_data\'"
+        cur.execute(s) # Execute the SQL
+        machine_data = cur.fetchall()
+
+        return render_template('Employees_Report.html', employee_master=employee_master, machine_master=machine_master, machine_data=machine_data,machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
     # User is not loggedin redirect to login page
     return havingAccess()
 
