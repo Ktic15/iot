@@ -30,41 +30,39 @@
     <div class="col-lg-3">
 
         <div class="card card-body">
-            <form action="/report" method="POST">
+            <form action="/employees_report" method="POST">
                 <h2> Set Filter </h2>
 
                 <div class="form-group">
-                    <label>Select Employee Master:</label><br>
-                    {% for temp in employee_master %}
-                    <input type="checkbox" id="employee_master.{{temp[0]}}" name="employee_master.{{temp[0]}}" value="employee_master">
-                    <label> {{temp[0]}}</label><br>
-                    {% endfor %}
-                </div>
-
-                <div class="form-group">
-                    <label>Select Machine Master:</label><br>
-                    {% for temp in machine_master %}
-                    <input type="checkbox" id="machine_master.{{temp[0]}}" name="machine_master.{{temp[0]}}" value="machine_master">
-                    <label for="{{temp[0]}}"> {{temp[0]}}</label><br>
-                    {% endfor %}
-                </div>
-
-                <div class="form-group">
-                    <label>Select Machine Operator:</label><br>
-                    {% for temp in machine_operator %}
-                    <input type="checkbox" id="machine_operator.{{temp[0]}}" name="machine_operator.{{temp[0]}}" value="machine_operator">
-                    <label for="{{temp[0]}}"> {{temp[0]}}</label><br>
-                    {% endfor %}
+                    <label>Operator id:</label>
+                    <select id="employeeCode" name='employeeCode' class="form-control" required>
+                        <option value="all" > ALL </option>
+                        {% for item in employeesItem %}
+                            <option value="{{ item.employee_code }}" >{{ item.employee_code }} / {{ item.employee_name}} </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label>Select Machine data:</label><br>
-                    {% for temp in machine_data %}
-                    <input type="checkbox" id="machine_data.{{temp[0]}}" name="machine_data.{{temp[0]}}" value="machine_data">
-                    <label for="{{temp[0]}}"> {{temp[0]}}</label><br>
-                    {% endfor %}
+                    <label>From Date:</label>
+                    <input type="date" id="fromDate" name="fromDate"class="form-control" required>
                 </div>
-
-
+                <div class="form-group">
+                    <label>To Date:</label>
+                    <input type="date" id="toDate" name="toDate"class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Shift:</label>
+                    <select id="shiftCode" name="shiftCode"class="form-control" required>
+                        <option value="all" > ALL </option>
+                        {% for item in shiftItem %}
+                            <option value="{{ item.scode }}" >{{ item.scode }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                <label>Export as PDF: </label>
+                <input name="export_pdf" type="checkbox">
+                </div>
                 <button class="btn btn-primary btn-block" name="save">
                     Generate Report
                 </button>
@@ -81,13 +79,11 @@
         </div>
     </div>
     <div class="col-md-8">
-        {% if table_vs_column==[]: %}
-        <h2>No data Generated</h2>
-        {% endif %}
         <table id="dtable" class="table table-striped table-bordered" style="width:100%">
             <thead>
             <tr>
-                {% for row in table_vs_column %}
+                <td>Sno</td>
+                {% for row in columns %}
                 <td>{{row}}</td>
                 {% endfor %}
             </tr>
@@ -95,6 +91,7 @@
             <tbody>
             {% for rows in list_data %}
             <tr>
+                <td>{{loop.index}}</td>
                 {% for row in rows %}
                 <td>{{row}}</td>
                 {% endfor %}
@@ -110,6 +107,11 @@ var status = '{{status}}';
 if (status!=""){
     alert(status);
 }
+
+'{% for name,value in userInput.items() %}'
+    console.log('{{name}}:{{value}}');
+   document.getElementById('{{name}}').value='{{value}}';
+'{% endfor %}'
 
 function exportCheck(){
     if ('{{table_vs_column}}'=='[]'){

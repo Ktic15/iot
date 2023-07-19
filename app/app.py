@@ -9,7 +9,11 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 import threading
 import time
-
+# from win32com import client
+# import jpype
+# import asposecells
+# jpype.startJVM()
+# from asposecells.api import Workbook, FileFormatType
 
 app = Flask(__name__)
 app.secret_key = "cairocoders-ednalan"
@@ -25,9 +29,9 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 # Global variables
 list_data = []
 table_vs_column=[]
-previousShift=1
-previousShiftDate=1
-
+userInput={}
+stop_threads = False
+autoRefresh = 1000*60*5 # 5 mins in millisec #auto refresh dashboard page and check shift change in thread loop
 
 
 def havingAccess(roleCheck=[], errorMsg="Access Denied. Only "):
@@ -49,28 +53,36 @@ def getCurrentShift():
       shift_master = cur.fetchall()
       return shift_master[0][0]
 
+previousShift=int(getCurrentShift())
+previousShiftDate=datetime.datetime.now().strftime("%d-%m-%y")
+currentEpochTime = time.time()
 def loop():
     global previousShift
     global previousShiftDate
+    global stop_threads, currentEpochTime
     while(True):
-        currentShift = int(getCurrentShift())
-        if(previousShift!=currentShift):
-            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            s = "SELECT * FROM machine_data"
-            cur.execute(s) # Execute the SQL mo_efficiency mo_count
-            machine_datas = cur.fetchall()
-
-            for machine_data in machine_datas:
-                s="UPDATE machine_operator SET  mo_efficiency="+int(machine_data["efficiency"]) +",mo_count="+int(machine_data["current_count"]) +" where date_=\'"+previousShiftDate+"\' AND shift=\'"+previousShift+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'";
+        if currentEpochTime+(autoRefresh/1000) < time.time():
+            currentEpochTime = time.time()
+            currentShift = int(getCurrentShift())
+            if(previousShift!=currentShift):
+                cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                s = "SELECT * FROM machine_data"
                 cur.execute(s) # Execute the SQL mo_efficiency mo_count
-                opitems = cur.fetchall()
+                machine_datas = cur.fetchall()
 
-            previousShift=currentShift
-            previousShiftDate=datetime.datetime.now().strftime("%d-%m-%y")
-    time.sleep(60*5)
+                for machine_data in machine_datas:
+                    s="UPDATE machine_operator SET  mo_efficiency="+str(machine_data["efficiency"])+",mo_count="+str(machine_data["current_count"])+" where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'";
+                    cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                    conn.commit()
+
+                previousShift=currentShift
+                previousShiftDate=datetime.datetime.now().strftime("%d-%m-%y")
+        if stop_threads:
+            break
+
 
 x = threading.Thread(target=loop)
-x.start()
+#x.start()
 
 @app.route('/')
 def GhIndex():
@@ -725,10 +737,7 @@ def DbIndex():
                 machine_details["npccps"] = list_details["npccps"]
                 machine_details["efficiency_tolarance"] = list_details["efficiency_tolarance"]
             dashboard_machine_data.append(machine_details)
-        dashboard_machine_data.extend(dashboard_machine_data)
-        dashboard_machine_data.extend(dashboard_machine_data)
-        dashboard_machine_data.extend(dashboard_machine_data)
-        dashboard_machine_data.extend(dashboard_machine_data)
+        # dashboard_machine_data.extend(dashboard_machine_data)
         dashboard_machine_data_split=[]
         dashboard_machine_data_container=[]
         max_per_page=12
@@ -742,8 +751,7 @@ def DbIndex():
                 dashboard_machine_data_container=[]
         dashboard_machine_data_split.append(dashboard_machine_data_container)
         page_count = len(dashboard_machine_data_split)
-        print(len(dashboard_machine_data_split))
-        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count)
+        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh)
     return havingAccess()
 
 @app.route('/datahub')
@@ -825,7 +833,9 @@ def employees_report():
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         global list_data
         global table_vs_column
+        global userInput
         status = ""
+        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","Machine No","Machine Name","Supervisor","Efficiency(%)","count"]
         #app.logger.warning('testing warning log')
         #app.logger.error('testing error log')
         #app.logger.info('testing info log')
@@ -833,48 +843,78 @@ def employees_report():
         if request.method == 'POST':
             if "save" in request.form:
                 list_data = []
-                table_vs_column=[]
-                for selected_column in request.form:
-                    if selected_column!="save":
-                        table_vs_column.append(selected_column)
-
+                table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
+                employeeCode = request.form["employeeCode"]
+                fromDate = request.form["fromDate"]
+                toDate = request.form["toDate"]
+                shiftCode = request.form["shiftCode"]
+                userInput ={"employeeCode":employeeCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode }
                 s = "SELECT "
                 for column in table_vs_column:
                     s+=column+","
                 s=s[0:-1]
-                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN machine_data ON machine_operator.machine_no=machine_data.machine_no"
+                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode"
+                s+=" WHERE machine_operator.date_::date >= \'"+fromDate+"\' AND machine_operator.date_::date <= \'"+toDate+"\'"
+                if employeeCode!="all":
+                    s+=" AND machine_operator.operator_id=\'"+employeeCode+"\'"
+                if shiftCode!="all":
+                    s+=" AND machine_operator.shift=\'"+shiftCode+"\'"
+
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
+                length = len(list_data)
+                if length!=0:
+                    total=["" for i in range(len(columns)-3)]
+                    total.append("Total Average")
+                    efficiency=0
+                    count=0
+                    for list in list_data:
+                        efficiency+=int(list["mo_efficiency"])
+                        count+=int(list["mo_count"])
+
+                    total.extend([format(efficiency/length,'.2f'),format(count/length,'.2f')])
+                    list_data.append(total)
             elif "export" in request.form:
                 if list_data!=[]:
-                    df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=table_vs_column)
-                    df.to_excel('Reports/report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]+".xlsx", sheet_name='sheet 1')
+                    df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=columns)
+                    fileName='Reports/Employee_report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]
+                    df.to_excel(fileName+".xlsx", sheet_name='employee')
+                    if "export_pdf" in request.form:
+                        pass
+                        # workbook = Workbook(fileName+".xlsx")
+                        # saveOptions = PdfSaveOptions()
+                        # saveOptions.setOnePagePerSheet(True)
+                        # workbook.save(fileName+".pdf", saveOptions)
+                        # Import Module
+                         # Open Microsoft Excel
+                         # excel = client.Dispatch("Excel.Application")
+                         #
+                         # # Read Excel File
+                         # sheets = excel.Workbooks.Open(fileName+".xlsx")
+                         # work_sheets = sheets.Worksheets[0]
+                         #
+                         # # Convert into PDF File
+                         # work_sheets.ExportAsFixedFormat(0, fileName+".pdf")
                     status="export success"
                 else:
                     status="No date to export"
             if "reset" in request.form:
                 list_data = []
-                table_vs_column=[]
+                userInput={}
 
-        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'employee_master\'"
+        s = "SELECT * FROM Employee_Master  where employee_designation='Operator'"
         cur.execute(s) # Execute the SQL
-        employee_master = cur.fetchall()
+        employeesItem = cur.fetchall()
 
-        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_master\'"
+        s = "SELECT * FROM Shift_Master"
         cur.execute(s) # Execute the SQL
-        machine_master = cur.fetchall()
+        shiftItem = cur.fetchall()
 
-        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_operator\'"
-        cur.execute(s) # Execute the SQL
-        machine_operator = cur.fetchall()
 
-        s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_data\'"
-        cur.execute(s) # Execute the SQL
-        machine_data = cur.fetchall()
-
-        return render_template('Employees_Report.html', employee_master=employee_master, machine_master=machine_master, machine_data=machine_data,machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
+    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem, columns=columns, list_data = list_data, status=status,userInput=userInput)
     # User is not loggedin redirect to login page
     return havingAccess()
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run( debug=True,host="0.0.0.0")
+    stop_threads=True

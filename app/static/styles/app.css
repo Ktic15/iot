@@ -52,3 +52,10 @@
     height:40px;
     width:40px;
 }
+#carousel-control-box{
+       opacity:0;
+       transition-duration:1s;
+}
+#carousel-control-box:hover{
+        opacity:1;
+}
