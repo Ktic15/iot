@@ -109,7 +109,7 @@
                 <select id='ssel' name="svname" class="form-control" required>
                   <option value="" >Select </option>
                   {% for item in Svitems %}
-                  <option value="{{ item.employee_name }}" >{{ item.employee_name }} </option>
+                  <option value="{{ item.employee_name}},{{ item.employee_code }}" >{{ item.employee_code }} / {{ item.employee_name}} </option>
                   {% endfor %}
                   </select>
               </div>

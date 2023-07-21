@@ -9,6 +9,8 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 import threading
 import time
+import aspose.pdf as pdf
+
 # from win32com import client
 # import jpype
 # import asposecells
@@ -71,7 +73,7 @@ def loop():
                 machine_datas = cur.fetchall()
 
                 for machine_data in machine_datas:
-                    s="UPDATE machine_operator SET  mo_efficiency="+str(machine_data["efficiency"])+",mo_count="+str(machine_data["current_count"])+" where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'";
+                    s="UPDATE machine_operator SET  mo_efficiency="+str(machine_data["efficiency"])+",mo_count="+str(machine_data["current_count"])+" where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
                     cur.execute(s) # Execute the SQL mo_efficiency mo_count
                     conn.commit()
 
@@ -205,7 +207,7 @@ def add_entry():
         Date_ = request.form['cdate']
         Shift = request.form['shift']
         
-        Shift_supervisor_name = request.form['svname']
+        Shift_supervisor_name = request.form['svname'].split(',')
         Time_ = request.form['ctime']
         operator_change = request.form['opc']
         
@@ -217,13 +219,13 @@ def add_entry():
             reason=request.form['reason']
             cur.execute("INSERT INTO change_reason (sno,reason,time_) VALUES (%s,%s,current_time)", (int(sno),reason))
             conn.commit()
-            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Time_,operator_change,sno))
+            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name[0],Time_,operator_change,sno))
             conn.commit()
         else:
             Machine_No = request.form['mno'].split(',')
             Operator_Id = request.form['oid'].split(',')
             Part_No = request.form['pno'].split(',')
-            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No[1],Operator_Id[1],Part_No[1],Shift_supervisor_name,Time_,operator_change,sno))
+            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No[1],Operator_Id[1],Part_No[1],Shift_supervisor_name[0],Shift_supervisor_name[1],Time_,operator_change,sno))
             conn.commit()
         
         flash('Operator Added successfully')
@@ -836,6 +838,7 @@ def employees_report():
         global userInput
         status = ""
         columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","Machine No","Machine Name","Supervisor","Efficiency(%)","count"]
+        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
         #app.logger.warning('testing warning log')
         #app.logger.error('testing error log')
         #app.logger.info('testing info log')
@@ -843,12 +846,14 @@ def employees_report():
         if request.method == 'POST':
             if "save" in request.form:
                 list_data = []
-                table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
                 employeeCode = request.form["employeeCode"]
+                machineCode = request.form["machineCode"]
+                supervisorCode = request.form["supervisorCode"]
+                partCode = request.form["partCode"]
                 fromDate = request.form["fromDate"]
                 toDate = request.form["toDate"]
                 shiftCode = request.form["shiftCode"]
-                userInput ={"employeeCode":employeeCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode }
+                userInput ={"employeeCode":employeeCode,"machineCode":machineCode,"supervisorCode":supervisorCode,"partCode":partCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode}
                 s = "SELECT "
                 for column in table_vs_column:
                     s+=column+","
@@ -859,6 +864,12 @@ def employees_report():
                     s+=" AND machine_operator.operator_id=\'"+employeeCode+"\'"
                 if shiftCode!="all":
                     s+=" AND machine_operator.shift=\'"+shiftCode+"\'"
+                if machineCode!="all":
+                    s+=" AND machine_operator.machine_no=\'"+machineCode+"\'"
+                if supervisorCode!="all":
+                    s+=" AND machine_operator.shift_supervisor_Id=\'"+supervisorCode+"\'"
+                if partCode!="all":
+                    s+=" AND machine_operator.shift=\'"+partCode+"\'"
 
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
@@ -869,9 +880,10 @@ def employees_report():
                     efficiency=0
                     count=0
                     for list in list_data:
-                        efficiency+=int(list["mo_efficiency"])
-                        count+=int(list["mo_count"])
-
+                        if list["mo_efficiency"]!=None:
+                            efficiency+=int(list["mo_efficiency"])
+                        if list["mo_count"]!=None:
+                            count+=int(list["mo_count"])
                     total.extend([format(efficiency/length,'.2f'),format(count/length,'.2f')])
                     list_data.append(total)
             elif "export" in request.form:
@@ -881,6 +893,72 @@ def employees_report():
                     df.to_excel(fileName+".xlsx", sheet_name='employee')
                     if "export_pdf" in request.form:
                         pass
+#                         license = pdf.License()
+#                         license.set_license("Aspose.Total.lic")
+
+                        # Instantiate a new PDF document
+                        pdfFile = pdf.Document()
+
+                        # Create a page in the PDF file
+                        newPage = pdfFile.pages.add()
+
+                        text_fragment = pdf.text.TextFragment("AVO Carbon Report")
+                        text_fragment.text_state.font_size = 22
+                        text_fragment.horizontal_alignment = 2
+                        text_fragment.margin = pdf.MarginInfo(0,0,0,-40)
+                        newPage.paragraphs.add(text_fragment)
+
+                        # Create a table
+                        table = pdf.Table()
+                        table.column_widths = '37'
+                        # table.alignment = 20
+                        # table.column_adjustment = 50
+                        table.default_cell_padding = pdf.MarginInfo(2,2,2,2)
+                        table.margin = pdf.MarginInfo(left=-80,top=10,right=-80,bottom=0) # left,top,right,bottom
+                        # Set border width
+                        table.default_cell_border =  pdf.BorderInfo(pdf.BorderSide.ALL, 1.0, pdf.Color.black)
+                        row = table.rows.add()
+                        cell = row.cells.add()
+                        cell.alignment = 2
+                        textCell= pdf.text.TextFragment("Sno")
+                        textCell.text_state.font_size = 10
+                        cell.paragraphs.add(textCell);
+                        for title in columns:
+                            cell = row.cells.add()
+                            cell.alignment = 2
+                            textCell = pdf.text.TextFragment(title)
+                            textCell.text_state.font_size = 10
+                            cell.paragraphs.add(textCell)
+                        sno=0
+                        list_data.extend(list_data)
+                        for rows in list_data:
+                            # Add a row to the table
+                            row = table.rows.add()
+                            sno+=1
+                            row.cells.add(str(sno))
+                            for datas in rows:
+                                # Add table cells
+                                row.cells.add(str(datas))
+
+                        # Add table to the target page
+                        newPage.paragraphs.add(table)
+
+                        # Save the PDF on the disk
+                        pdfFile.save(fileName+".pdf")
+
+                        print("Table in PDF created successfully")
+
+                        # var headerTable = new Aspose.PDF.Table {DefaultCellBorder = new PDF.BorderInfo(PDF.BorderSide.Top, 0.1F)};
+                        # var margin = new PDF.MarginInfo { Top = 2f, Left = 0f, Right = 0f, Bottom = 5f };
+                        # headerTable.DefaultCellPadding = margin;
+                        #
+                        # var row1 = headerTable.Rows.Add();
+                        # var cell1= row1.Cells.Add();
+                        # cell1.Alignment = PDF.HorizontalAlignment.Left;
+                        # var textCell= new TextFragment(“my column text that should stretch…”);
+                        # cell1.Paragraphs.Add(textCell);
+                        # header.Paragraphs.Add(headerTable);
+
                         # workbook = Workbook(fileName+".xlsx")
                         # saveOptions = PdfSaveOptions()
                         # saveOptions.setOnePagePerSheet(True)
@@ -910,8 +988,19 @@ def employees_report():
         cur.execute(s) # Execute the SQL
         shiftItem = cur.fetchall()
 
+        s = "SELECT * FROM Machine_Master"
+        cur.execute(s) # Execute the SQL
+        machinesItem = cur.fetchall()
 
-    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem, columns=columns, list_data = list_data, status=status,userInput=userInput)
+        s = "SELECT * FROM Part_Master"
+        cur.execute(s) # Execute the SQL
+        partsItem = cur.fetchall()
+
+        s = "SELECT * FROM Employee_Master where employee_designation='Shift supervisor'"
+        cur.execute(s) # Execute the SQL
+        supervisorsItem = cur.fetchall()
+
+    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem, columns=columns, list_data = list_data, status=status,userInput=userInput)
     # User is not loggedin redirect to login page
     return havingAccess()
 
