@@ -8,6 +8,10 @@ Setup Steps
 Another method
 pip install -r requirements.txt
 
+Need to install
+
+pip install aspose.pdf
+
 additional modules required
 pip install pandas
 pip install flask
