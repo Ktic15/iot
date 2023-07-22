@@ -84,7 +84,7 @@ def loop():
 
 
 x = threading.Thread(target=loop)
-#x.start()
+x.start()
 
 @app.route('/')
 def GhIndex():
