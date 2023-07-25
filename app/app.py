@@ -869,7 +869,7 @@ def employees_report():
                 if supervisorCode!="all":
                     s+=" AND machine_operator.shift_supervisor_Id=\'"+supervisorCode+"\'"
                 if partCode!="all":
-                    s+=" AND machine_operator.shift=\'"+partCode+"\'"
+                    s+=" AND machine_operator.part_no=\'"+partCode+"\'"
 
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
