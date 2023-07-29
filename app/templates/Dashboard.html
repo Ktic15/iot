@@ -23,59 +23,57 @@
         {% for dashboard_machine_data in dashboard_machine_data_split %}
             <div id="first" class="carousel-item" data-interval="{{10000}}">
                  <div class="container-fluid" style="margin:0%;padding:1% 2%;height:100%">
-                     <div class="row" >
+                     <table class="dashboard-table">
+                         <tr>
+                             <th> Machine </th>
+                             <th>Operator Name</th>
+                             <th>Part</th>
+                             <th> count</th>
+                             <th>Production efficiency</th>
+                             <th>Efficiency color code</th>
+                         </tr>
+
                          {% for item in dashboard_machine_data %}
-                         <div class="col-lg-3"style="padding: 5px;">
-                             <div class="card card-body">
-                                 <div class="form-group">
-                                     <div><label><b>Machine:</b> {{item.mno}}/{{item.mname}}</label></div>
-                                     <div>
-                                         <label>
-                                             <b>Operator Name:</b>
-                                             {%if item.employee_code%}
-                                             {{item.employee_code}}/{{item.employee_name}}
-                                             {%else%}
-                                             Not yet Assigned
-                                             {%endif%}
-                                         </label>
-                                     </div>
-                                     <div>
-                                         <label>
-                                             <b>Part:</b>
-                                             {%if item.pcode%}
-                                             {{item.pcode}}/{{item.pdes}}
-                                             {%else%}
-                                             No data
-                                             {%endif%}
-                                         </label>
-                                     </div>
-                                     <div>
-                                         <label>
-                                             <b>count:</b>
-                                             {%if item.current_count%}
-                                                 {{item.current_count}}
-                                             {%else%}
-                                             No data
-                                             {%endif%}
-                                             /
-                                             {%if item.npccps%}
-                                             {{item.npccps}}
-                                             {%else%}
-                                             No data
-                                             {%endif%}
-                                         </label>
-                                     </div>
-                                     <div>
-                                         <label><b>Production <br>efficiency </b></label>
-                                         <span class="dashboard_efficiency"><b>:</b> {{item.efficiency}}%
-                                                 <div class="efficiency_color" style="background-color:{%if item.efficiency>100-item.efficiency_tolarance and item.efficiency<100+item.efficiency_tolarance %} #f39c12 {%elif item.efficiency<=100-item.efficiency_tolarance%} red {%elif item.efficiency>=100+item.efficiency_tolarance%} #27ae60 {%endif%};"> </div>
-                                             </span>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
+                         <tr>
+                            <td>
+                                {{item.mno}}/{{item.mname}}
+                            </td>
+                            <td>
+                               {%if item.employee_code%}
+                               {{item.employee_code}}/{{item.employee_name}}
+                               {%else%}
+                               Not yet Assigned
+                               {%endif%}
+                            </td>
+                            <td>
+                               {%if item.pcode%}
+                               {{item.pcode}}/{{item.pdes}}
+                               {%else%}
+                               No data
+                               {%endif%}
+                            </td>
+                            <td>
+                               {%if item.current_count%}
+                                   {{item.current_count}}
+                               {%else%}
+                               No data
+                               {%endif%}
+                               /
+                               {%if item.npccps%}
+                               {{item.npccps}}
+                               {%else%}
+                               No data
+                               {%endif%}
+                            </td>
+                            <td>
+                              {{item.efficiency}}%
+                            </td>
+                            <td>
+                                <div id="efficiency_color" class="efficiency_color" style="background-color:{%if item.efficiency>100-item.efficiency_tolarance and item.efficiency<100+item.efficiency_tolarance %} #f39c12 {%elif item.efficiency<=100-item.efficiency_tolarance%} red {%elif item.efficiency>=100+item.efficiency_tolarance%} #27ae60 {%endif%};"> </div>
+                            </td>
+                         </tr>
                          {% endfor %}
-                     </div>
+                    </table>
                  </div>
             </div>
         {% endfor %}

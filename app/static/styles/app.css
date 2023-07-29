@@ -22,14 +22,10 @@
     position: relative;
     top:4px;
     margin-left:10px;
-    width:80px;
-    height:20px;
+    width:200px;
+    height:30px;
 }
-.dashboard_efficiency{
-    position:relative;
-    top:-10px;
-    left:2px;
-}
+
 
 #carousel-indicators li{
     background-color: red;
@@ -58,4 +54,15 @@
 }
 #carousel-control-box:hover{
         opacity:1;
+}
+.dashboard-table th, .dashboard-table td{
+    text-align:center;
+    font-size:25px;
+    padding: 10px;
+}
+.dashboard-table{
+    width:100%;
+}
+.dashboard-table, .dashboard-table th, .dashboard-table td{
+    border:1px solid;
 }
