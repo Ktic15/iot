@@ -886,7 +886,7 @@ def employees_report():
                             count+=int(list["mo_count"])
                     total.extend([format(efficiency/length,'.2f'),format(count/length,'.2f')])
                     list_data.append(total)
-            elif "export" in request.form:
+            elif "export" in request.form: # the below code will not call because export check box showing is commented in qpmloyees_report.html
                 if list_data!=[]:
                     df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=columns)
                     fileName='Reports/Employee_report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]
