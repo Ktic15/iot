@@ -50,7 +50,7 @@ def getCurrentShift():
       cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
       today = datetime.datetime.now()
       current_time = today.strftime("%H:%M")
-      s = "SELECT * FROM shift_master WHERE start_time::time <= '{0}' and end_time::time >= '{0}'".format(current_time)
+      s = "SELECT * FROM shift_master WHERE (start_time::time <= end_time::time and start_time::time <= '{0}' and end_time::time >= '{0}') or (start_time::time > end_time::time and ((start_time::time <= '{0}' and '23:59'>='{0}')or('00:00'<='{0}' and end_time::time >= '{0}')))".format(current_time)
       cur.execute(s) # Execute the SQL
       shift_master = cur.fetchall()
       return shift_master[0][0]
