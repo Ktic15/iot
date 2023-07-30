@@ -155,7 +155,6 @@ function exportReset(){
             return;
         }
         var sTable = document.getElementById('tab').innerHTML;
-          var head = document.getElementById('head').innerHTML;
         var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
@@ -168,7 +167,6 @@ function exportReset(){
         win.document.write('<html><head>');
         win.document.write('<title>AVO Carbon report </title>');   // <title> FOR PDF HEADER.
         win.document.write(style);
-        win.document.write(head);        // ADD STYLE INSIDE THE HEAD TAG.
         win.document.write('</head>');
 
         win.document.write('<body>');
