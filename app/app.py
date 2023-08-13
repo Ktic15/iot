@@ -908,7 +908,7 @@ def employees_report():
                     s+=column+","
                 s=s[0:-1]
                 ss=s
-                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN tool_master ON machine_operator.tool_no=tool_master.tno"
+                s+=" FROM machine_operator FULL OUTER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code FULL OUTER JOIN machine_master ON machine_operator.machine_no=machine_master.mno FULL OUTER JOIN part_master ON machine_operator.part_no=part_master.pcode FULL OUTER JOIN tool_master ON machine_operator.tool_no=tool_master.tno"
                 s+=" WHERE machine_operator.date_::date >= \'"+fromDate+"\' AND machine_operator.date_::date <= \'"+toDate+"\'"
                 if employeeCode!="all":
                     s+=" AND machine_operator.operator_id=\'"+employeeCode+"\'"
