@@ -208,7 +208,7 @@ def add_entry():
         Shift = request.form['shift']
         
         Shift_supervisor_name = request.form['svname'].split(',')
-        Time_ = request.form['ctime']
+        Time_ = datetime.datetime.now().strftime("%H:%M")
         operator_change = request.form['opc']
         
         if(operator_change =='Y'): 
