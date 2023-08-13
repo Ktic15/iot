@@ -82,7 +82,14 @@ DB_USER = "postgres"
 DB_PASS = "espmqtt"
 DB_PORT = "5432"
 
+DB passwords
+espmqtt, iot
+
 default user details
 name - admin
 password - admin
 hashed password - pbkdf2:sha256:600000$MfxtXWvDH7PNF6TG$54080262a87227d10afb586803b20f7bd337a8df2518fa2842de7f61d374bb07
+
+node red
+http://127.0.0.1:1880/#flow/1ce336a1f129144e
+http://127.0.0.1:1880/ui/#!/0?socketid=85zZPyOjCe3oPGfFAAAR
