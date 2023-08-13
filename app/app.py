@@ -1,7 +1,7 @@
  #app.py
 import pandas
 from fileinput import filename
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 import psycopg2 #pip install psycopg2 
 from psycopg2 import extras
 import datetime
@@ -886,12 +886,12 @@ def employees_report():
                             count+=int(list["mo_count"])
                     total.extend([format(efficiency/length,'.2f'),format(count/length,'.2f')])
                     list_data.append(total)
-            elif "export" in request.form: # the below code will not call because export check box showing is commented in qpmloyees_report.html
+            elif "export" in request.form:
                 if list_data!=[]:
                     df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=columns)
                     fileName='Reports/Employee_report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]
                     df.to_excel(fileName+".xlsx", sheet_name='employee')
-                    if "export_pdf" in request.form:
+                    if "export_pdf" in request.form: # the below code will not call because export check box showing is commented in employees_report.html
                         pass
 #                         license = pdf.License()
 #                         license.set_license("Aspose.Total.lic")
@@ -974,6 +974,7 @@ def employees_report():
                          # # Convert into PDF File
                          # work_sheets.ExportAsFixedFormat(0, fileName+".pdf")
                     status="export success"
+                    return send_file("..\\"+fileName+".xlsx", mimetype='text/csv', as_attachment=True)
                 else:
                     status="No date to export"
             if "reset" in request.form:
