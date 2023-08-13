@@ -77,10 +77,10 @@ def loop():
                     cur.execute(s)
                     check = cur.fetchall()
                     if check==[]:
-                        s="INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShiftDate,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"])
+                        cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShiftDate,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"]))
                     else:
                         s="UPDATE machine_operator SET mo_efficiency="+str(machine_data["efficiency"])+",mo_count="+str(machine_data["current_count"])+" where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
-                    cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                        cur.execute(s) # Execute the SQL mo_efficiency mo_count
                     conn.commit()
 
                 previousShift=currentShift
