@@ -107,10 +107,22 @@
             </thead>
             <tbody>
             {% for rows in list_data %}
+            {% set outer_loop = loop.index %}
             <tr>
                 <td>{{loop.index}}</td>
                 {% for row in rows %}
-                <td>{{row}}</td>
+                    {%if row == None%}
+                        <td>None</td>
+                    {%elif loop.index==columns_length-1 and list_data_length!=outer_loop%}
+                        <td>
+                            {{row}}
+                            {% set efficiency = row %}
+                            {% set efficiency_tolarance = part_master_tolorance_data[outer_loop-1][0] %}
+                            <div id="efficiency_color" class="efficiency_color efficiency_color_dashboard" style="background-color:{%if efficiency>100-efficiency_tolarance and efficiency<100+efficiency_tolarance %} #f39c12 {%elif efficiency<=100-efficiency_tolarance%} red {%elif efficiency>=100+efficiency_tolarance%} #27ae60 {%endif%};"> </div>
+                        </td>
+                    {%else%}
+                        <td>{{row}}</td>
+                    {%endif%}
                 {% endfor %}
             </tr>
             {% endfor %}

@@ -839,6 +839,7 @@ def employees_report():
         status = ""
         columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","Machine No","Machine Name","Supervisor","Efficiency(%)","count"]
         table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
+        part_master_tolorance_data=[]
         #app.logger.warning('testing warning log')
         #app.logger.error('testing error log')
         #app.logger.info('testing info log')
@@ -858,6 +859,7 @@ def employees_report():
                 for column in table_vs_column:
                     s+=column+","
                 s=s[0:-1]
+                ss=s
                 s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode"
                 s+=" WHERE machine_operator.date_::date >= \'"+fromDate+"\' AND machine_operator.date_::date <= \'"+toDate+"\'"
                 if employeeCode!="all":
@@ -873,6 +875,10 @@ def employees_report():
 
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
+                s = s.replace(ss,"SELECT part_master.efficiency_tolarance")
+                cur.execute(s) # Execute the SQL
+                part_master_tolorance_data = cur.fetchall()
+
                 length = len(list_data)
                 if length!=0:
                     total=["" for i in range(len(columns)-3)]
@@ -1001,7 +1007,7 @@ def employees_report():
         cur.execute(s) # Execute the SQL
         supervisorsItem = cur.fetchall()
 
-    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem, columns=columns, list_data = list_data, status=status,userInput=userInput)
+    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
     # User is not loggedin redirect to login page
     return havingAccess()
 
