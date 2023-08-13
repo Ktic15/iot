@@ -76,10 +76,19 @@ def loop():
                     s="SELECT * FROM machine_operator where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
                     cur.execute(s)
                     check = cur.fetchall()
+
+                    s="SELECT * FROM tool_data where machine_no=\'"+machine_data["machine_no"]+"\'"
+                    cur.execute(s)
+                    tool_data = cur.fetchall()
+
+                    tool_no = "Not Assigned"
+                    if tool_data!=[]:
+                        tool_no = tool_data[0]["tool_no"]
+
                     if check==[]:
-                        cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShiftDate,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"]))
+                        cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShiftDate,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"],tool_no))
                     else:
-                        s="UPDATE machine_operator SET mo_efficiency="+str(machine_data["efficiency"])+",mo_count="+str(machine_data["current_count"])+" where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                        s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["efficiency"])+"\',mo_count=\'"+str(machine_data["current_count"])+"\',tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
                         cur.execute(s) # Execute the SQL mo_efficiency mo_count
                     conn.commit()
 
@@ -247,9 +256,41 @@ def get_operator(sno):
     print(data)
     return render_template('edit_operator.html', operator = data[0])
 
-@app.route('/tool_change')
+@app.route('/tool_change', methods=['POST','GET'])
 def tool_change():
-    return render_template('Tool_Change.html')
+    if request.method == 'POST':
+        machine_id = request.form['machineCode']
+        tool_id = request.form['toolCode']
+        reason = request.form['reason']
+
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+        s="SELECT * FROM tool_data where machine_no=\'"+machine_id+"\'"
+        cur.execute(s)
+        check = cur.fetchall()
+
+        if check==[]:
+            cur.execute("INSERT INTO tool_data (tool_no,machine_no,reason) VALUES (%s,%s,%s)", (tool_id,machine_id,reason))
+        else:
+            s="UPDATE tool_data SET tool_no=\'"+tool_id+"\',reason=\'"+str(reason)+"\' where machine_no=\'"+machine_id+"\'"
+            cur.execute(s)
+        conn.commit()
+
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    s = "SELECT * FROM machine_master"
+    cur.execute(s) # Execute the SQL
+    machine_data = cur.fetchall()
+
+    s = "SELECT * FROM tool_master"
+    cur.execute(s) # Execute the SQL
+    tool_data = cur.fetchall()
+
+    s = "SELECT * FROM machine_master INNER JOIN tool_data ON machine_master.mno=tool_data.machine_no INNER JOIN tool_master ON tool_master.tno=tool_data.tool_no"
+    cur.execute(s) # Execute the SQL
+    machine_tool_data = cur.fetchall()
+
+    flash('Employee Updated Successfully')
+    return render_template('Tool_Change.html', machine_data = machine_data, tool_data=tool_data, machine_tool_data=machine_tool_data)
 
 @app.route('/machine_stoppage')
 def machine_stoppage():
@@ -843,8 +884,8 @@ def employees_report():
         global table_vs_column
         global userInput
         status = ""
-        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","Machine No","Machine Name","Supervisor","Efficiency(%)","count"]
-        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
+        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","Machine No","Machine Name","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
+        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
         part_master_tolorance_data=[]
         #app.logger.warning('testing warning log')
         #app.logger.error('testing error log')
@@ -860,13 +901,14 @@ def employees_report():
                 fromDate = request.form["fromDate"]
                 toDate = request.form["toDate"]
                 shiftCode = request.form["shiftCode"]
-                userInput ={"employeeCode":employeeCode,"machineCode":machineCode,"supervisorCode":supervisorCode,"partCode":partCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode}
+                toolCode = request.form["toolCode"]
+                userInput ={"employeeCode":employeeCode,"machineCode":machineCode,"supervisorCode":supervisorCode,"partCode":partCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode,"toolCode":toolCode}
                 s = "SELECT "
                 for column in table_vs_column:
                     s+=column+","
                 s=s[0:-1]
                 ss=s
-                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode"
+                s+=" FROM machine_operator INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN tool_master ON machine_operator.tool_no=tool_master.tno"
                 s+=" WHERE machine_operator.date_::date >= \'"+fromDate+"\' AND machine_operator.date_::date <= \'"+toDate+"\'"
                 if employeeCode!="all":
                     s+=" AND machine_operator.operator_id=\'"+employeeCode+"\'"
@@ -878,6 +920,8 @@ def employees_report():
                     s+=" AND machine_operator.shift_supervisor_Id=\'"+supervisorCode+"\'"
                 if partCode!="all":
                     s+=" AND machine_operator.part_no=\'"+partCode+"\'"
+                if toolCode!="all":
+                    s+=" AND machine_operator.tool_no=\'"+toolCode+"\'"
 
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
@@ -1013,7 +1057,11 @@ def employees_report():
         cur.execute(s) # Execute the SQL
         supervisorsItem = cur.fetchall()
 
-    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
+        s = "SELECT * FROM Tool_Master"
+        cur.execute(s) # Execute the SQL
+        toolItem = cur.fetchall()
+
+    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
     # User is not loggedin redirect to login page
     return havingAccess()
 

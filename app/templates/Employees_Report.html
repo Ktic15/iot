@@ -9,7 +9,6 @@
 <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
 
 
-</nav>
 <div class="row"><div class="col-lg-3"><h2>Report Generation</h2></div></div>
 <div class="row">
     <div class="col-lg-3">
@@ -33,6 +32,15 @@
                         <option value="all" > ALL </option>
                         {% for item in machinesItem %}
                         <option value="{{ item.mno }}" >{{ item.mno }} / {{ item.mname}} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tool id:</label><br>
+                    <select id="toolCode" data-live-search="true" class="selectpicker"  name='toolCode' class="form-control" required>
+                        <option value="all" > ALL </option>
+                        {% for item in toolItem %}
+                        <option value="{{ item.tno }}" >{{ item.tno }} / {{ item.tname}} </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -116,9 +124,11 @@
                     {%elif loop.index==columns_length-1 and list_data_length!=outer_loop%}
                         <td>
                             {{row}}
-                            {% set efficiency = row %}
-                            {% set efficiency_tolarance = part_master_tolorance_data[outer_loop-1][0] %}
-                            <div id="efficiency_color" class="efficiency_color efficiency_color_dashboard" style="background-color:{%if efficiency>100-efficiency_tolarance and efficiency<100+efficiency_tolarance %} #f39c12 {%elif efficiency<=100-efficiency_tolarance%} red {%elif efficiency>=100+efficiency_tolarance%} #27ae60 {%endif%};"> </div>
+                            {%if part_master_tolorance_data!=[]%}
+                                {% set efficiency = row %}
+                                {% set efficiency_tolarance = part_master_tolorance_data[outer_loop-1][0] %}
+                                <div id="efficiency_color" class="efficiency_color efficiency_color_dashboard" style="background-color:{%if efficiency>100-efficiency_tolarance and efficiency<100+efficiency_tolarance %} #f39c12 {%elif efficiency<=100-efficiency_tolarance%} red {%elif efficiency>=100+efficiency_tolarance%} #27ae60 {%endif%};"> </div>
+                            {%endif%}
                         </td>
                     {%else%}
                         <td>{{row}}</td>

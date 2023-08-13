@@ -56,6 +56,19 @@ ADD mo_efficiency int,
 ADD mo_count int
 UPDATE machine_operator SET  mo_efficiency= 100,mo_count= 22;(this line is to put fake data)
 
+_new-2_(13-08-2023)
+
+create table tool_data(
+ 	id serial primary key,
+	tool_no varchar(255) not NULL,
+	machine_no VARCHAR(100) NOT NULL,
+	Reason varchar(255) not NULL
+)
+
+ALTER TABLE machine_operator
+ADD tool_no varchar(40)
+
+
 git link https://github.com/Ktic15/iot
 
 requirement generation
