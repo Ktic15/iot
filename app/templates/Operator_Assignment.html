@@ -56,7 +56,7 @@
               <select id='pl' name="proline" class="form-control" required>
                 <option value="" >Select Product line </option>
                 {% for item in Plitems %}
-                <option value="{{ item.pcode }}" >{{ item.pcode }} </option>
+                <option value="{{ item.pcode }}" >{{ item.pcode }}/{{ item.pline }} </option>
                 {% endfor %}
                 </select>
               </div>
@@ -113,7 +113,7 @@
                   {% endfor %}
                   </select>
               </div>
-              <div class="form-group">
+              <div class="form-group" hidden>
                 <label>Operator changed:</label>
                 <select id='opc' name="opc" class="form-control" required >
                   <option value="N" >No </option>
@@ -135,15 +135,16 @@
         <thead>
           <tr>
             <td>Sno</td>
-            <td>Product_line</td>
-            <td>Date_</td>
+            <td>Product line</td>
+            <td>Date</td>
             <td>Shift</td>
-            <td>Machine_No</td>
-            <td>Operator_Id</td>
-            <td>Part_No</td>
-            <td>Shift_supervisor_name</td>
-            <td>Time_</td>
-            <td>operator_change</td>
+            <td>Machine No</td>
+            <td>Operator Id</td>
+            <td>Part No</td>
+            <td>Shift supervisor name</td>
+            <td>Time</td>
+            <td>Operator change</td>
+            <td>Change Reason</td>
             <td>Action</td>
           </tr>
         </thead>
@@ -151,7 +152,7 @@
           {% for row in list_operators %}
           <tr>
             <td>{{row[0]}}</td>
-            <td>{{row[1]}}</td>
+            <td>{{row.pline}}</td>
             <td>{{row[2]}}</td>
             <td>{{row[3]}}</td>
             <td>{{row[4]}}</td>
@@ -160,6 +161,7 @@
             <td>{{row[7]}}</td>
             <td>{{row[8]}}</td>
             <td>{{row[9]}}</td>
+            <td>{{row.reason}}</td>
             <td width="130">
               <a href="/oa/change/{{row[0]}}" class="btn btn-secondary btn-sm">Change operator</a>
               

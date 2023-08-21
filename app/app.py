@@ -207,7 +207,7 @@ def Svindex():
         s = "SELECT * FROM Employee_Master where employee_designation='Shift supervisor'"
         cur.execute(s) # Execute the SQL
         Svitem = cur.fetchall()
-        s = "SELECT * FROM machine_operator where date_=current_date"
+        s = "SELECT * FROM machine_operator FULL OUTER JOIN change_reason ON machine_operator.sno=change_reason.sno FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode where date_=current_date"
         cur.execute(s) # Execute the SQL
         opitems = cur.fetchall()
         return render_template('Operator_Assignment.html', Plitems = Plitem, Sitems = Sitem, Mitems=Mitem,Pitems=Pitem,Eitems=Eitem, Svitems = Svitem,list_operators=opitems)
@@ -252,9 +252,15 @@ def get_operator(sno):
    
     cur.execute("SELECT * FROM machine_operator WHERE sno = %d "% int(sno))
     data = cur.fetchall()
+
+    s = "SELECT * FROM Employee_Master where employee_designation='Operator'"
+    cur.execute(s) # Execute the SQL
+    Eitem = cur.fetchall()
+
     cur.close()
+
     print(data)
-    return render_template('edit_operator.html', operator = data[0])
+    return render_template('edit_operator.html', operator = data[0], Eitems=Eitem)
 
 @app.route('/tool_change', methods=['POST','GET'])
 def tool_change():
@@ -884,8 +890,8 @@ def employees_report():
         global table_vs_column
         global userInput
         status = ""
-        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","Machine No","Machine Name","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
-        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.product_line","machine_operator.part_no","part_master.pdes","machine_operator.machine_no","machine_master.mname","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
+        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","NPC Count","Machine No","Machine Name","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
+        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","product_line_master.pline","machine_operator.part_no","part_master.pdes","part_master.npccps","machine_operator.machine_no","machine_master.mname","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
         part_master_tolorance_data=[]
         #app.logger.warning('testing warning log')
         #app.logger.error('testing error log')
@@ -908,7 +914,7 @@ def employees_report():
                     s+=column+","
                 s=s[0:-1]
                 ss=s
-                s+=" FROM machine_operator FULL OUTER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code FULL OUTER JOIN machine_master ON machine_operator.machine_no=machine_master.mno FULL OUTER JOIN part_master ON machine_operator.part_no=part_master.pcode FULL OUTER JOIN tool_master ON machine_operator.tool_no=tool_master.tno"
+                s+=" FROM machine_operator FULL OUTER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code FULL OUTER JOIN machine_master ON machine_operator.machine_no=machine_master.mno FULL OUTER JOIN part_master ON machine_operator.part_no=part_master.pcode FULL OUTER JOIN tool_master ON machine_operator.tool_no=tool_master.tno FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode"
                 s+=" WHERE machine_operator.date_::date >= \'"+fromDate+"\' AND machine_operator.date_::date <= \'"+toDate+"\'"
                 if employeeCode!="all":
                     s+=" AND machine_operator.operator_id=\'"+employeeCode+"\'"
