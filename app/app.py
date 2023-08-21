@@ -9,7 +9,7 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 import threading
 import time
-import aspose.pdf as pdf
+# import aspose.pdf as pdf
 
 # from win32com import client
 # import jpype
@@ -952,57 +952,57 @@ def employees_report():
 #                         license = pdf.License()
 #                         license.set_license("Aspose.Total.lic")
 
-                        # Instantiate a new PDF document
-                        pdfFile = pdf.Document()
-
-                        # Create a page in the PDF file
-                        newPage = pdfFile.pages.add()
-
-                        text_fragment = pdf.text.TextFragment("AVO Carbon Report")
-                        text_fragment.text_state.font_size = 22
-                        text_fragment.horizontal_alignment = 2
-                        text_fragment.margin = pdf.MarginInfo(0,0,0,-40)
-                        newPage.paragraphs.add(text_fragment)
-
-                        # Create a table
-                        table = pdf.Table()
-                        table.column_widths = '37'
-                        # table.alignment = 20
-                        # table.column_adjustment = 50
-                        table.default_cell_padding = pdf.MarginInfo(2,2,2,2)
-                        table.margin = pdf.MarginInfo(left=-80,top=10,right=-80,bottom=0) # left,top,right,bottom
-                        # Set border width
-                        table.default_cell_border =  pdf.BorderInfo(pdf.BorderSide.ALL, 1.0, pdf.Color.black)
-                        row = table.rows.add()
-                        cell = row.cells.add()
-                        cell.alignment = 2
-                        textCell= pdf.text.TextFragment("Sno")
-                        textCell.text_state.font_size = 10
-                        cell.paragraphs.add(textCell);
-                        for title in columns:
-                            cell = row.cells.add()
-                            cell.alignment = 2
-                            textCell = pdf.text.TextFragment(title)
-                            textCell.text_state.font_size = 10
-                            cell.paragraphs.add(textCell)
-                        sno=0
-                        list_data.extend(list_data)
-                        for rows in list_data:
-                            # Add a row to the table
-                            row = table.rows.add()
-                            sno+=1
-                            row.cells.add(str(sno))
-                            for datas in rows:
-                                # Add table cells
-                                row.cells.add(str(datas))
-
-                        # Add table to the target page
-                        newPage.paragraphs.add(table)
-
-                        # Save the PDF on the disk
-                        pdfFile.save(fileName+".pdf")
-
-                        print("Table in PDF created successfully")
+                        # # Instantiate a new PDF document
+                        # pdfFile = pdf.Document()
+                        #
+                        # # Create a page in the PDF file
+                        # newPage = pdfFile.pages.add()
+                        #
+                        # text_fragment = pdf.text.TextFragment("AVO Carbon Report")
+                        # text_fragment.text_state.font_size = 22
+                        # text_fragment.horizontal_alignment = 2
+                        # text_fragment.margin = pdf.MarginInfo(0,0,0,-40)
+                        # newPage.paragraphs.add(text_fragment)
+                        #
+                        # # Create a table
+                        # table = pdf.Table()
+                        # table.column_widths = '37'
+                        # # table.alignment = 20
+                        # # table.column_adjustment = 50
+                        # table.default_cell_padding = pdf.MarginInfo(2,2,2,2)
+                        # table.margin = pdf.MarginInfo(left=-80,top=10,right=-80,bottom=0) # left,top,right,bottom
+                        # # Set border width
+                        # table.default_cell_border =  pdf.BorderInfo(pdf.BorderSide.ALL, 1.0, pdf.Color.black)
+                        # row = table.rows.add()
+                        # cell = row.cells.add()
+                        # cell.alignment = 2
+                        # textCell= pdf.text.TextFragment("Sno")
+                        # textCell.text_state.font_size = 10
+                        # cell.paragraphs.add(textCell);
+                        # for title in columns:
+                        #     cell = row.cells.add()
+                        #     cell.alignment = 2
+                        #     textCell = pdf.text.TextFragment(title)
+                        #     textCell.text_state.font_size = 10
+                        #     cell.paragraphs.add(textCell)
+                        # sno=0
+                        # list_data.extend(list_data)
+                        # for rows in list_data:
+                        #     # Add a row to the table
+                        #     row = table.rows.add()
+                        #     sno+=1
+                        #     row.cells.add(str(sno))
+                        #     for datas in rows:
+                        #         # Add table cells
+                        #         row.cells.add(str(datas))
+                        #
+                        # # Add table to the target page
+                        # newPage.paragraphs.add(table)
+                        #
+                        # # Save the PDF on the disk
+                        # pdfFile.save(fileName+".pdf")
+                        #
+                        # print("Table in PDF created successfully")
 
                         # var headerTable = new Aspose.PDF.Table {DefaultCellBorder = new PDF.BorderInfo(PDF.BorderSide.Top, 0.1F)};
                         # var margin = new PDF.MarginInfo { Top = 2f, Left = 0f, Right = 0f, Bottom = 5f };
