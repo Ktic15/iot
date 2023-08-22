@@ -250,7 +250,7 @@ def add_entry():
 def get_operator(sno):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
    
-    cur.execute("SELECT * FROM machine_operator WHERE sno = %d "% int(sno))
+    cur.execute("SELECT * FROM machine_operator FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode WHERE sno = %d "% int(sno))
     data = cur.fetchall()
 
     s = "SELECT * FROM Employee_Master where employee_designation='Operator'"
