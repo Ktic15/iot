@@ -234,7 +234,7 @@ def add_entry():
             reason=request.form['reason']
             cur.execute("INSERT INTO change_reason (sno,reason,time_) VALUES (%s,%s,current_time)", (int(sno),reason))
             conn.commit()
-            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name[0],Time_,operator_change,sno))
+            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name[0],Shift_supervisor_name[1],Time_,operator_change,sno))
             conn.commit()
         else:
             Machine_No = request.form['mno'].split(',')

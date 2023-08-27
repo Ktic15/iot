@@ -8,10 +8,19 @@
 <body>
     <h1>Upload Excel File (.xlsx)</h1>
     <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
-        <input type="file" name="file"
+        <input id="file" type="file" name="file"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-        <input type="submit" value="Upload">
+        <input type="submit" value="Upload" onclick="checkFile()">
     </form>
 </body>
  
 </html>
+<script>
+    function checkFile(){
+    let fileInput = document.getElementById("file");
+    if (fileInput.files.length == 0) {
+      event.preventDefault();
+      alert("No file selected. Please select the file");
+    }
+  }
+  </script>

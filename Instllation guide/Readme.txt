@@ -68,6 +68,13 @@ create table tool_data(
 ALTER TABLE machine_operator
 ADD tool_no varchar(40)
 
+_new-3_(27-08-2023)-for upload excel file for operator assignment
+
+ALTER TABLE machine_operator ALTER COLUMN time_ SET DEFAULT NOW();
+ALTER TABLE machine_operator ALTER COLUMN operator_change SET DEFAULT 'N';
+ALTER TABLE machine_operator ALTER COLUMN old_alloc SET DEFAULT 0;
+
+
 
 git link https://github.com/Ktic15/iot
 
