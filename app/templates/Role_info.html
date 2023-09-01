@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Role Info</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    <!-- Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/app.css') }}">
+</head>
+<body>
+<div class="login-bg" style="">
+    <div class="check container py-5 ">
+        <h1>Roles Details</h1>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Sno</th>
+                <th scope="col">Role Name</th>
+                <th scope="col">Access Level</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Admin</td>
+                <td>
+                    <ol>
+                        <li>Having access to all pages</li>
+                        <li>Can able to delete operator assignment data</li>
+                        <li>Create,delete users</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>IT-Role</td>
+                <td>
+                    <ol>
+                        <li>Having access to all pages</li>
+                        <li>Can able to delete operator assignment data</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Hr</td>
+                <td>
+                    <ol>
+                        <li>Having access to Dashboard</li>
+                        <li>Having access to Employee Report</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">4</th>
+                <td>Supervisor</td>
+                <td>
+                    <ol>
+                        <li>Having access to Dashboard</li>
+                        <li>Having access to Operator Assignment</li>
+                        <li>Having access to Tool Change</li>
+                        <li>Having access to Employee Report</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">5</th>
+                <td>Viewer</td>
+                <td>
+                    <ol>
+                        <li>Having access to Dashboard</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</div>
+
+</body>
+</html>

@@ -184,7 +184,7 @@ def register():
 
 @app.route('/view_users')
 def view_users():
-    if(havingAccess(["admin"])==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM logincredentials"
         cur.execute(s) # Execute the SQL
@@ -192,7 +192,7 @@ def view_users():
         cur.close()
         return render_template('view_users.html', list_users = list_users)
     else:
-        return havingAccess(["admin"])
+        return havingAccess([""])
 
 @app.route('/users/delete/<string:id>', methods = ['POST','GET'])
 def delete_user(id):
@@ -213,6 +213,10 @@ def logout():
     session.pop('role', None)
     # Redirect to login page
     return redirect(url_for('login'))
+
+@app.route('/role_info')
+def role_info():
+    return render_template('Role_info.html')
 
 @app.route('/error_msg/<errorMsg>')
 def errorPage(errorMsg):
@@ -318,43 +322,45 @@ def get_operator(sno):
 
 @app.route('/tool_change', methods=['POST','GET'])
 def tool_change():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    if request.method == 'POST':
-        machine_id = request.form['machineCode']
-        tool_id = request.form['toolCode']
-        reason = request.form['reason']
+    if(havingAccess(["supervisor"])==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        if request.method == 'POST':
+            machine_id = request.form['machineCode']
+            tool_id = request.form['toolCode']
+            reason = request.form['reason']
 
 
-        s="SELECT * FROM tool_data where machine_no=\'"+machine_id+"\'"
-        cur.execute(s)
-        check = cur.fetchall()
+            s="SELECT * FROM tool_data where machine_no=\'"+machine_id+"\'"
+            cur.execute(s)
+            check = cur.fetchall()
 
-        try:
-            if check==[]:
-                cur.execute("INSERT INTO tool_data (tool_no,machine_no,reason) VALUES (%s,%s,%s)", (tool_id,machine_id,reason))
-            else:
-                s="UPDATE tool_data SET tool_no=\'"+tool_id+"\',reason=\'"+str(reason)+"\' where machine_no=\'"+machine_id+"\'"
-                cur.execute(s)
-            conn.commit()
-            flash('Tool Updated Successfully')
-        except (Exception, psycopg2.DatabaseError) as error:
-            flash('Error Occurred : '+str(error))
-            conn.rollback()
+            try:
+                if check==[]:
+                    cur.execute("INSERT INTO tool_data (tool_no,machine_no,reason) VALUES (%s,%s,%s)", (tool_id,machine_id,reason))
+                else:
+                    s="UPDATE tool_data SET tool_no=\'"+tool_id+"\',reason=\'"+str(reason)+"\' where machine_no=\'"+machine_id+"\'"
+                    cur.execute(s)
+                conn.commit()
+                flash('Tool Updated Successfully')
+            except (Exception, psycopg2.DatabaseError) as error:
+                flash('Error Occurred : '+str(error))
+                conn.rollback()
 
-    s = "SELECT * FROM machine_master"
-    cur.execute(s) # Execute the SQL
-    machine_data = cur.fetchall()
+        s = "SELECT * FROM machine_master"
+        cur.execute(s) # Execute the SQL
+        machine_data = cur.fetchall()
 
-    s = "SELECT * FROM tool_master"
-    cur.execute(s) # Execute the SQL
-    tool_data = cur.fetchall()
+        s = "SELECT * FROM tool_master"
+        cur.execute(s) # Execute the SQL
+        tool_data = cur.fetchall()
 
-    s = "SELECT * FROM machine_master INNER JOIN tool_data ON machine_master.mno=tool_data.machine_no INNER JOIN tool_master ON tool_master.tno=tool_data.tool_no"
-    cur.execute(s) # Execute the SQL
-    machine_tool_data = cur.fetchall()
-    cur.close()
+        s = "SELECT * FROM machine_master INNER JOIN tool_data ON machine_master.mno=tool_data.machine_no INNER JOIN tool_master ON tool_master.tno=tool_data.tool_no"
+        cur.execute(s) # Execute the SQL
+        machine_tool_data = cur.fetchall()
+        cur.close()
 
-    return render_template('Tool_Change.html', machine_data = machine_data, tool_data=tool_data, machine_tool_data=machine_tool_data)
+        return render_template('Tool_Change.html', machine_data = machine_data, tool_data=tool_data, machine_tool_data=machine_tool_data)
+    return havingAccess(["supervisor"])
 
 @app.route('/machine_stoppage')
 def machine_stoppage():
@@ -510,14 +516,14 @@ def delete_employee(ecode):
  
 @app.route('/part')
 def PIndex():
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Part_Master"
         cur.execute(s) # Execute the SQL
         list_parts = cur.fetchall()
         cur.close()
         return render_template('Part_Master.html', list_parts = list_parts)
-    return havingAccess()
+    return havingAccess([""])
  
 @app.route('/part/add_part', methods=['POST'])
 def add_part():
@@ -594,14 +600,14 @@ def delete_part(pcode):
 
 @app.route('/machine')
 def MIndex():
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Machine_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         cur.close()
         return render_template('Machine_Master.html', list_machine = list_users)
-    return havingAccess()
+    return havingAccess([""])
 
 @app.route('/machine/add_machine', methods=['POST'])
 def add_machine():
@@ -678,14 +684,14 @@ def delete_machine(Mno):
  
 @app.route('/tool')
 def TIndex():
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Tool_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         cur.close()
         return render_template('Tool_Master.html', list_tool = list_users)
-    return havingAccess()
+    return havingAccess([""])
 
 @app.route('/tool/add_tool', methods=['POST'])
 def add_tool():
@@ -756,14 +762,14 @@ def delete_tool(tno):
 
 @app.route('/shift')
 def SIndex():
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Shift_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         cur.close()
         return render_template('Shift_Master.html', list_shift = list_users)
-    return havingAccess()
+    return havingAccess([""])
 
 @app.route('/shift/add_shift', methods=['POST'])
 def add_shift():
@@ -833,14 +839,14 @@ def delete_shift(scode):
 
 @app.route('/product_line')
 def PLIndex():
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         s = "SELECT * FROM Product_line_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         cur.close()
         return render_template('Product_line_Master.html', list_product_line = list_users)
-    return havingAccess()
+    return havingAccess([""])
 
 @app.route('/product_line/add_product_line', methods=['POST'])
 def add_product_line():
@@ -953,7 +959,7 @@ def DbIndex():
 
 @app.route('/datahub')
 def DhIndex():
-    return redirect("/machine")
+    return redirect("/employee")
     # cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     # s = "SELECT * FROM Product_line_Master"
     # cur.execute(s) # Execute the SQL
@@ -968,7 +974,7 @@ def manage():
 def RIndex():
     return  redirect("/employees_report")
     # Check if user is loggedin
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         global list_data
         global table_vs_column
@@ -1022,12 +1028,12 @@ def RIndex():
 
         return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_data=machine_data,machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
     # User is not loggedin redirect to login page
-    return havingAccess()
+    return havingAccess([""])
 
 @app.route('/employees_report', methods=['POST','GET'])
 def employees_report():
     # Check if user is loggedin
-    if(havingAccess()==True):
+    if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         global list_data
         global table_vs_column
@@ -1211,9 +1217,9 @@ def employees_report():
         toolItem = cur.fetchall()
         cur.close()
 
-    return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
+        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
     # User is not loggedin redirect to login page
-    return havingAccess()
+    return havingAccess([""])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

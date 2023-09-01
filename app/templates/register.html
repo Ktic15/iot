@@ -48,7 +48,6 @@
                                             <option value="it-role">IT Role</option>
                                             <option value="hr">Hr</option>
                                             <option value="supervisor">Supervisor</option>
-                                            <option value="production-incharge">Production Incharge</option>
                                             <option value="viewer">Viewer</option>
                                         </select>
                                     </div>
@@ -68,6 +67,7 @@
                                         <input type="submit" value="Register" class="btn btn-primary btn-lg" style="padding-left: 2.5rem; padding-right: 2.5rem;" name="">
                                         <a href="{{ url_for('view_users') }}" class="btn btn-primary btn-lg">View User</a>
                                         <p class="medium fw-bold mt-2 pt-1 mb-0">Already having a account? <a href="{{ url_for('login') }}" class="link-danger">Login</a></p>
+                                        <p class="medium fw-bold mt-2 pt-1 mb-0">Need to know about Role Details? <a href="{{ url_for('role_info') }}" class="link-danger">Role info</a></p>
                                     </div>
                                 </form>
                             </div>
