@@ -76,6 +76,8 @@ ALTER TABLE machine_operator ALTER COLUMN old_alloc SET DEFAULT 0;
 
 _new-4_(02-09-2023)
 ALTER TABLE part_master ALTER COLUMN efficiency_tolarance SET DEFAULT 10;
+ALTER TABLE employee_master ADD employee_alternate_mobile_no VARCHAR(40);
+employee_address, employee_aadhaar, employee_mobile_no columns in employee_master table NOT NULL removed
 
 git link https://github.com/Ktic15/iot
 
