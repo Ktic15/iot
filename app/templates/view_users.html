@@ -37,7 +37,9 @@
                 <td>{{row.username}}</td>
                 <td>{{row.role}}</td>
                 <td width="130">
-                    <a href="/users/delete/{{row.id}}" class="btn btn-danger btn-delete btn-sm" onclick="confirmm()">Remove</a>
+                    {%if row.username!='admin'%}
+                        <a href="/users/delete/{{row.id}}" class="btn btn-danger btn-delete btn-sm" onclick="confirmm()">Remove</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
