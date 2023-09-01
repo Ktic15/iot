@@ -21,9 +21,9 @@ app = Flask(__name__)
 app.secret_key = "cairocoders-ednalan"
  
 DB_HOST = "localhost"
-DB_NAME = "iot_company_project001"
+DB_NAME = "iot-project"
 DB_USER = "postgres"
-DB_PASS = "gokul"
+DB_PASS = "espmqtt"
 DB_PORT = "5432"
 
 conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT )
