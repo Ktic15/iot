@@ -74,7 +74,8 @@ ALTER TABLE machine_operator ALTER COLUMN time_ SET DEFAULT NOW();
 ALTER TABLE machine_operator ALTER COLUMN operator_change SET DEFAULT 'N';
 ALTER TABLE machine_operator ALTER COLUMN old_alloc SET DEFAULT 0;
 
-
+_new-4_(02-09-2023)
+ALTER TABLE part_master ALTER COLUMN efficiency_tolarance SET DEFAULT 10;
 
 git link https://github.com/Ktic15/iot
 

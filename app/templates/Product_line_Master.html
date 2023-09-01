@@ -47,15 +47,24 @@
       <div class="card card-body">
         <form action="/product_line/add_product_line" method="POST">
             <div class="form-group">
-                <input type="text" class="form-control" name="pcode" placeholder="Product Code">
+                <input type="text" class="form-control" name="pcode" placeholder="Product Code" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="pline" placeholder="Product line ">
+                <input type="text" class="form-control" name="pline" placeholder="Product line" required>
               </div>
               
           <button class="btn btn-primary btn-block">
             Save 
           </button>
+        </form> <br><br>
+        <h3>Upload Excel File</h3>
+        <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <input type="text" class="form-control" name="fname" value="product_line_master" >
+            <input id="file" type="file" name="file"
+                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+            <input class="btn btn-primary btn-block" type="submit" value="Upload" onclick="checkFile()">
+          </div>
         </form>
       </div>
     </div>
@@ -91,6 +100,13 @@
       $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );
       $('#nav_datahub').addClass( 'active' );
     });
+      function checkFile(){
+    let fileInput = document.getElementById("file");
+    if (fileInput.files.length == 0) {
+      event.preventDefault();
+      alert("No file selected. Please select the file");
+    }
+  }
   </script>
 
 {% endblock %}

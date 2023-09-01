@@ -71,6 +71,15 @@
           <button class="btn btn-primary btn-block">
             Save 
           </button>
+        </form> <br><br>
+        <h3>Upload Excel File</h3>
+        <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
+          <div class="form-group">
+            <input type="text" class="form-control" name="fname" value="part_master" >
+            <input id="file" type="file" name="file"
+                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+            <input class="btn btn-primary btn-block" type="submit" value="Upload" onclick="checkFile()">
+          </div>
         </form>
       </div>
     </div>
@@ -115,5 +124,12 @@
       $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );
       $('#nav_datahub').addClass( 'active' );
     });
+      function checkFile(){
+    let fileInput = document.getElementById("file");
+    if (fileInput.files.length == 0) {
+      event.preventDefault();
+      alert("No file selected. Please select the file");
+    }
+  }
   </script>
 {% endblock %}

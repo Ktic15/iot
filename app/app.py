@@ -53,6 +53,7 @@ def getCurrentShift():
       s = "SELECT * FROM shift_master WHERE (start_time::time <= end_time::time and start_time::time <= '{0}' and end_time::time >= '{0}') or (start_time::time > end_time::time and ((start_time::time <= '{0}' and '23:59'>='{0}')or('00:00'<='{0}' and end_time::time >= '{0}')))".format(current_time)
       cur.execute(s) # Execute the SQL
       shift_master = cur.fetchall()
+      cur.close()
       return shift_master[0][0]
 
 previousShift=int(getCurrentShift())
@@ -84,16 +85,20 @@ def loop():
                     tool_no = "Not Assigned"
                     if tool_data!=[]:
                         tool_no = tool_data[0]["tool_no"]
-
-                    if check==[]:
-                        cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShift,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"],tool_no))
-                    else:
-                        s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["efficiency"])+"\',mo_count=\'"+str(machine_data["current_count"])+"\',tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
-                        cur.execute(s) # Execute the SQL mo_efficiency mo_count
-                    conn.commit()
+                    try:
+                        if check==[]:
+                            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShift,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"],tool_no))
+                        else:
+                            s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["efficiency"])+"\',mo_count=\'"+str(machine_data["current_count"])+"\',tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                            cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                        conn.commit()
+                    except (Exception, psycopg2.DatabaseError) as error:
+                        flash('Error Occurred : '+str(error))
+                        conn.rollback()
 
                 previousShift=currentShift
                 previousShiftDate=datetime.datetime.now().strftime("%d-%m-%y")
+                cur.close()
         if stop_threads:
             break
 
@@ -112,14 +117,14 @@ def login():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
-        print(password)
+        #print(password)
         # Check if account exists using MySQL
         cursor.execute('SELECT * FROM loginCredentials WHERE username = %s', [username])
         # Fetch one record and return result
         account = cursor.fetchone()
         if account:
             password_rs = account['password']
-            print(password_rs)
+            #print(password_rs)
             # If account exists in users table in out database
             if check_password_hash(password_rs, password):
                 # Create session data, we can access this data in other routes
@@ -135,6 +140,7 @@ def login():
         else:
             # Account doesnt exist or username/password incorrect
             flash('Incorrect username/password')
+    cursor.close()
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -161,15 +167,42 @@ def register():
                 flash('Please fill out the form!')
             else:
                 # Account doesnt exists and the form data is valid, now insert new account into users table
-                cursor.execute("INSERT INTO loginCredentials (username, password, role) VALUES (%s,%s,%s)", (username, _hashed_password, role))
-                conn.commit()
-                flash('You have successfully registered!.')
+                try:
+                    cursor.execute("INSERT INTO loginCredentials (username, password, role) VALUES (%s,%s,%s)", (username, _hashed_password, role))
+                    conn.commit()
+                    flash('You have successfully registered!.')
+                except (Exception, psycopg2.DatabaseError) as error:
+                    flash('Error Occurred : '+str(error))
+                    conn.rollback()
         elif request.method == 'POST':
             # Form is empty... (no POST data)
             flash('Please fill out the form!')
         # Show registration form with message (if any)
         return render_template('register.html')
+        cursor.close()
     return render_template('error_msg.html',errorMsg="Access Denied. Only Admin have the access to register new user")
+
+@app.route('/view_users')
+def view_users():
+    if(havingAccess(["admin"])==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        s = "SELECT * FROM logincredentials"
+        cur.execute(s) # Execute the SQL
+        list_users = cur.fetchall()
+        cur.close()
+        return render_template('view_users.html', list_users = list_users)
+    else:
+        return havingAccess(["admin"])
+
+@app.route('/users/delete/<string:id>', methods = ['POST','GET'])
+def delete_user(id):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    cur.execute('DELETE FROM logincredentials WHERE id = %s', [id])
+    conn.commit()
+    cur.close()
+    flash('User Removed Successfully')
+    return redirect(url_for('view_users'))
 
 @app.route('/logout')
 def logout():
@@ -210,13 +243,24 @@ def Svindex():
         s = "SELECT * FROM machine_operator FULL OUTER JOIN change_reason ON machine_operator.sno=change_reason.sno FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode where date_=current_date"
         cur.execute(s) # Execute the SQL
         opitems = cur.fetchall()
+        cur.close()
         return render_template('Operator_Assignment.html', Plitems = Plitem, Sitems = Sitem, Mitems=Mitem,Pitems=Pitem,Eitems=Eitem, Svitems = Svitem,list_operators=opitems)
     return havingAccess(["supervisor"])
 
+@app.route('/operator_assignment/delete/<string:sno>', methods = ['POST','GET'])
+def delete_operator_assignment(sno):
+     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+     cur.execute('DELETE FROM machine_operator WHERE sno = %s', [sno])
+     conn.commit()
+     cur.close()
+     flash('Operator Assigment Removed Successfully')
+     return redirect(url_for('Svindex'))
+
 @app.route('/oa/add_entry', methods=['POST'])
 def add_entry():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         sno=0
         Product_line = request.form['proline']
         Date_ = request.form['cdate']
@@ -225,25 +269,36 @@ def add_entry():
         Shift_supervisor_name = request.form['svname'].split(',')
         Time_ = datetime.datetime.now().strftime("%H:%M")
         operator_change = request.form['opc']
-        
+        error_occured=False
         if(operator_change =='Y'): 
             Machine_No = request.form['mno']
             Operator_Id = request.form['oid']
             Part_No = request.form['pno']
             sno=request.form['sno']
             reason=request.form['reason']
-            cur.execute("INSERT INTO change_reason (sno,reason,time_) VALUES (%s,%s,current_time)", (int(sno),reason))
-            conn.commit()
-            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name[0],Shift_supervisor_name[1],Time_,operator_change,sno))
-            conn.commit()
+            try:
+                cur.execute("INSERT INTO change_reason (sno,reason,time_) VALUES (%s,%s,current_time)", (int(sno),reason))
+                conn.commit()
+                cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name[0],Shift_supervisor_name[1],Time_,operator_change,sno))
+                conn.commit()
+            except (Exception, psycopg2.DatabaseError) as error:
+                flash('Error Occurred : '+str(error))
+                conn.rollback()
+                error_occured=True
         else:
             Machine_No = request.form['mno'].split(',')
             Operator_Id = request.form['oid'].split(',')
             Part_No = request.form['pno'].split(',')
-            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No[1],Operator_Id[1],Part_No[1],Shift_supervisor_name[0],Shift_supervisor_name[1],Time_,operator_change,sno))
-            conn.commit()
-        
-        flash('Operator Added successfully')
+            try:
+                cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (Product_line,Date_,Shift,Machine_No[1],Operator_Id[1],Part_No[1],Shift_supervisor_name[0],Shift_supervisor_name[1],Time_,operator_change,sno))
+                conn.commit()
+            except (Exception, psycopg2.DatabaseError) as error:
+                flash('Error Occurred : '+str(error))
+                conn.rollback()
+                error_occured=True
+        cur.close()
+        if not error_occured:
+            flash('Operator Added successfully')
         return redirect(url_for('Svindex'))
     
 @app.route('/oa/change/<sno>', methods = ['POST', 'GET'])
@@ -259,30 +314,33 @@ def get_operator(sno):
 
     cur.close()
 
-    print(data)
     return render_template('edit_operator.html', operator = data[0], Eitems=Eitem)
 
 @app.route('/tool_change', methods=['POST','GET'])
 def tool_change():
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
         machine_id = request.form['machineCode']
         tool_id = request.form['toolCode']
         reason = request.form['reason']
 
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         s="SELECT * FROM tool_data where machine_no=\'"+machine_id+"\'"
         cur.execute(s)
         check = cur.fetchall()
 
-        if check==[]:
-            cur.execute("INSERT INTO tool_data (tool_no,machine_no,reason) VALUES (%s,%s,%s)", (tool_id,machine_id,reason))
-        else:
-            s="UPDATE tool_data SET tool_no=\'"+tool_id+"\',reason=\'"+str(reason)+"\' where machine_no=\'"+machine_id+"\'"
-            cur.execute(s)
-        conn.commit()
+        try:
+            if check==[]:
+                cur.execute("INSERT INTO tool_data (tool_no,machine_no,reason) VALUES (%s,%s,%s)", (tool_id,machine_id,reason))
+            else:
+                s="UPDATE tool_data SET tool_no=\'"+tool_id+"\',reason=\'"+str(reason)+"\' where machine_no=\'"+machine_id+"\'"
+                cur.execute(s)
+            conn.commit()
+            flash('Tool Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
 
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     s = "SELECT * FROM machine_master"
     cur.execute(s) # Execute the SQL
     machine_data = cur.fetchall()
@@ -294,8 +352,8 @@ def tool_change():
     s = "SELECT * FROM machine_master INNER JOIN tool_data ON machine_master.mno=tool_data.machine_no INNER JOIN tool_master ON tool_master.tno=tool_data.tool_no"
     cur.execute(s) # Execute the SQL
     machine_tool_data = cur.fetchall()
+    cur.close()
 
-    flash('Employee Updated Successfully')
     return render_template('Tool_Change.html', machine_data = machine_data, tool_data=tool_data, machine_tool_data=machine_tool_data)
 
 @app.route('/machine_stoppage')
@@ -327,8 +385,10 @@ def view():
         try:
             extras.execute_values(cursor, query, tuples)
             conn.commit()
+            flash('Successfully uploaded')
         except (Exception, psycopg2.DatabaseError) as error:
             print("Error: %s" % error)
+            flash('Error Occurred : '+str(error))
             conn.rollback()
             cursor.close()
             return 1
@@ -337,15 +397,24 @@ def view():
   
   
     conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=DB_PORT )
-    tn=""
-    if(request.form['fname']=="EIndex"):
-        tn="employee_master"
-    if(request.form['fname']=="Svindex"):
-        tn="machine_operator"
-    if(request.form['fname']=="MIndex"):
-        tn="machine_master"
+
+    tn=request.form['fname']
     execute_values(conn, data,tn)
-    return redirect(url_for(request.form['fname']))
+
+    redirect_url=""
+    if tn=="machine_master":
+        redirect_url="MIndex"
+    elif tn=="employee_master":
+        redirect_url="EIndex"
+    elif tn=="part_master":
+        redirect_url="PIndex"
+    elif tn=="tool_master":
+        redirect_url="TIndex"
+    elif tn=="product_line_master":
+        redirect_url="PLIndex"
+    elif tn=="machine_operator":
+        redirect_url="Svindex"
+    return redirect(url_for(redirect_url))
   
 
 @app.route('/employee')
@@ -355,14 +424,15 @@ def EIndex():
         s = "SELECT * FROM Employee_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
+        cur.close()
         return render_template('Employee_Master.html', list_users = list_users)
     else:
         return havingAccess(["hr","supervisor"])
 
 @app.route('/add_Employee', methods=['POST'])
 def add_Employee():
-     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
      if request.method == 'POST':
+         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
          ecode = request.form['ecode']
          emaster = request.form['emaster']
          Edeg = request.form['edeg']
@@ -370,10 +440,16 @@ def add_Employee():
          eaddress = request.form['eaddress']
          eaadhar = request.form['eaadhar']
          emobile = request.form['emobile']
+         ealtmobile = request.form['ealtmobile']
          Fmanager = request.form['fmanager']
-         cur.execute("INSERT INTO Employee_Master (Employee_Code,Employee_Name,Employee_designation,Area_of_Work,Employee_Address,Employee_Aadhaar,Employee_Mobile_No,Function_Manager) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)", (ecode,emaster,Edeg,aow,eaddress,eaadhar,emobile,Fmanager))
-         conn.commit()
-         flash('Employee Added successfully')
+         try:
+             cur.execute("INSERT INTO Employee_Master (Employee_Code,Employee_Name,Employee_designation,Area_of_Work,Employee_Address,Employee_Aadhaar,Employee_Mobile_No,employee_alternate_mobile_no,Function_Manager) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (ecode,emaster,Edeg,aow,eaddress,eaadhar,emobile,ealtmobile,Fmanager))
+             conn.commit()
+             flash('Employee Added successfully')
+         except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+         cur.close()
          return redirect(url_for('EIndex'))
 
 @app.route('/edit/<ecode>', methods = ['POST', 'GET'])
@@ -383,7 +459,6 @@ def get_employee(ecode):
     cur.execute("SELECT * FROM Employee_Master WHERE Employee_Code = %s", [ecode])
     data = cur.fetchall()
     cur.close()
-    print(data)
     return render_template('edit_employee.html', Employee_Master = data[0])
  
 @app.route('/update/<ecode>', methods=['POST'])
@@ -396,24 +471,31 @@ def update_employee(ecode):
         eaddress = request.form['eaddress']
         eaadhar = request.form['eaadhar']
         emobile = request.form['emobile']
+        ealtmobile = request.form['ealtmobile']
         Fmanager = request.form['fmanager']
          
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE Employee_master
-            SET 
-            Employee_Code = %s,
-            Employee_Name = %s,
-            Employee_designation = %s,
-            Area_of_Work = %s,
-            Employee_Address = %s,
-            Employee_Aadhaar = %s,
-            Employee_Mobile_No = %s,
-            Functional_Manager = %s
-            WHERE Employee_Code = %s
-        """, (ecode,emaster,Edeg,aow,eaddress,eaadhar,emobile,Fmanager,ecode))
-        flash('Employee Updated Successfully')
-        conn.commit()
+        try:
+            cur.execute("""
+                UPDATE Employee_master
+                SET 
+                Employee_Code = %s,
+                Employee_Name = %s,
+                Employee_designation = %s,
+                Area_of_Work = %s,
+                Employee_Address = %s,
+                Employee_Aadhaar = %s,
+                Employee_Mobile_No = %s,
+                employee_alternate_mobile_no = %s,
+                Function_Manager = %s
+                WHERE Employee_Code = %s
+            """, (ecode,emaster,Edeg,aow,eaddress,eaadhar,emobile,ealtmobile,Fmanager,ecode))
+            conn.commit()
+            flash('Employee Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
         return redirect(url_for('EIndex'))
  
 @app.route('/delete/<string:ecode>', methods = ['POST','GET'])
@@ -422,6 +504,7 @@ def delete_employee(ecode):
 
     cur.execute('DELETE FROM Employee_Master WHERE Employee_Code = %s', [ecode])
     conn.commit()
+    cur.close()
     flash('Employee Removed Successfully')
     return redirect(url_for('EIndex'))
  
@@ -432,13 +515,14 @@ def PIndex():
         s = "SELECT * FROM Part_Master"
         cur.execute(s) # Execute the SQL
         list_parts = cur.fetchall()
+        cur.close()
         return render_template('Part_Master.html', list_parts = list_parts)
     return havingAccess()
  
 @app.route('/part/add_part', methods=['POST'])
 def add_part():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         pcode = request.form['pcode']
         pdes = request.form['pdes']
         cpn = request.form['cpn']
@@ -446,9 +530,15 @@ def add_part():
         npccps = request.form['npccps']
         pdesc = request.form['pdesc']
         efficiency_tolarance = request.form['efficiency_tolarance']
-        cur.execute("INSERT INTO part_Master (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance) VALUES (%s,%s,%s,%s,%s,%s,%s)", (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance))
-        conn.commit()
-        flash('Part Added successfully')
+        try:
+            cur.execute("INSERT INTO part_Master (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance) VALUES (%s,%s,%s,%s,%s,%s,%s)", (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance))
+            conn.commit()
+            flash('Part Added successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
+
         return redirect(url_for('PIndex'))
  
 @app.route('/part/edit/<pcode>', methods = ['POST', 'GET'])
@@ -458,7 +548,6 @@ def get_part(pcode):
     cur.execute("SELECT * FROM Part_Master WHERE pcode = %s", [pcode])
     data = cur.fetchall()
     cur.close()
-    print(data)
     return render_template('edit_part.html', Part_Master = data[0])
  
 @app.route('/part/update/<pcode>', methods=['POST'])
@@ -472,20 +561,25 @@ def update_part(pcode):
         pdesc = request.form['pdesc']
         efficiency_tolarance = request.form['efficiency_tolarance']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE Part_master
-            SET 
-            pcode = %s,
-            pdes = %s,
-            cpn = %s,
-            proline = %s,
-            npccps = %s,
-            pdesc = %s,
-            efficiency_tolarance = %s
-            WHERE pcode = %s
-        """, (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance,pcode))
-        flash('Part Updated Successfully')
-        conn.commit()
+        try:
+            cur.execute("""
+                UPDATE Part_master
+                SET 
+                pcode = %s,
+                pdes = %s,
+                cpn = %s,
+                proline = %s,
+                npccps = %s,
+                pdesc = %s,
+                efficiency_tolarance = %s
+                WHERE pcode = %s
+            """, (pcode,pdes,cpn,proline,npccps,pdesc,efficiency_tolarance,pcode))
+            conn.commit()
+            flash('Part Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
         return redirect(url_for('PIndex'))
  
 @app.route('/part/delete/<string:pcode>', methods = ['POST','GET'])
@@ -494,6 +588,7 @@ def delete_part(pcode):
    
     cur.execute('DELETE FROM Part_Master WHERE pcode = %s', [pcode])
     conn.commit()
+    cur.close()
     flash('Part Removed Successfully')
     return redirect(url_for('PIndex'))
 
@@ -504,13 +599,14 @@ def MIndex():
         s = "SELECT * FROM Machine_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
+        cur.close()
         return render_template('Machine_Master.html', list_machine = list_users)
     return havingAccess()
 
 @app.route('/machine/add_machine', methods=['POST'])
 def add_machine():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         Mno = request.form['Mno']
         mname = request.form['mname']
         mcat = request.form['mcat']
@@ -518,9 +614,15 @@ def add_machine():
         contdet = request.form['contdet']
         doc = request.form['doc']
         mkva = request.form['mkva']
-        cur.execute("INSERT INTO Machine_Master (Mno,mname,mcat,mmnu,contdet,doc,mkva) VALUES (%s,%s,%s,%s,%s,%s,%s)", (Mno,mname,mcat,mmnu,contdet,doc,mkva))
-        conn.commit()
-        flash('Machine Added successfully')
+        try:
+            cur.execute("INSERT INTO Machine_Master (Mno,mname,mcat,mmnu,contdet,doc,mkva) VALUES (%s,%s,%s,%s,%s,%s,%s)", (Mno,mname,mcat,mmnu,contdet,doc,mkva))
+            conn.commit()
+            flash('Machine Added successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
+
         return redirect(url_for('MIndex'))
  
 @app.route('/machine/edit/<Mno>', methods = ['POST', 'GET'])
@@ -530,7 +632,6 @@ def get_machine(Mno):
     cur.execute("SELECT * FROM Machine_Master WHERE Mno = %s", [Mno])
     data = cur.fetchall()
     cur.close()
-    print(data)
     return render_template('edit_machine.html', Machine_Master = data[0])
  
 @app.route('/machine/update/<Mno>', methods=['POST'])
@@ -544,20 +645,25 @@ def update_machine(Mno):
         doc = request.form['doc']
         mkva = request.form['mkva']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE Machine_master
-            SET 
-            Mno = %s,
-            mname = %s,
-            mcat = %s,
-            mmnu = %s,
-            contdet = %s,
-            doc = %s,
-            mkva = %s
-            WHERE Mno = %s
-        """, (Mno,mname,mcat,mmnu,contdet,doc,mkva,Mno))
-        flash('Machine Updated Successfully')
-        conn.commit()
+        try:
+            cur.execute("""
+                UPDATE Machine_master
+                SET 
+                Mno = %s,
+                mname = %s,
+                mcat = %s,
+                mmnu = %s,
+                contdet = %s,
+                doc = %s,
+                mkva = %s
+                WHERE Mno = %s
+            """, (Mno,mname,mcat,mmnu,contdet,doc,mkva,Mno))
+            conn.commit()
+            flash('Machine Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
         return redirect(url_for('MIndex'))
  
 @app.route('/machine/delete/<string:Mno>', methods = ['POST','GET'])
@@ -566,6 +672,7 @@ def delete_machine(Mno):
 
     cur.execute('DELETE FROM Machine_Master WHERE Mno = %s', [Mno])
     conn.commit()
+    cur.close()
     flash('Machine Removed Successfully')
     return redirect(url_for('MIndex'))
  
@@ -576,21 +683,28 @@ def TIndex():
         s = "SELECT * FROM Tool_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
+        cur.close()
         return render_template('Tool_Master.html', list_tool = list_users)
     return havingAccess()
 
 @app.route('/tool/add_tool', methods=['POST'])
 def add_tool():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         tno = request.form['tno']
         tname = request.form['tname']
         ttype = request.form['ttype']
         tlpc = request.form['tlpc']
         maccat = request.form['maccat']
-        cur.execute("INSERT INTO Tool_Master (tno,tname,ttype,tlpc,maccat) VALUES (%s,%s,%s,%s,%s)", (tno,tname,ttype,tlpc,maccat))
-        conn.commit()
-        flash('Tool Added successfully')
+        try:
+            cur.execute("INSERT INTO Tool_Master (tno,tname,ttype,tlpc,maccat) VALUES (%s,%s,%s,%s,%s)", (tno,tname,ttype,tlpc,maccat))
+            conn.commit()
+            flash('Tool Added successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
+
         return redirect(url_for('TIndex'))
  
 @app.route('/tool/edit/<tno>', methods = ['POST', 'GET'])
@@ -600,7 +714,6 @@ def get_tool(tno):
     cur.execute("SELECT * FROM Tool_Master WHERE tno = %s", [tno])
     data = cur.fetchall()
     cur.close()
-    print(data)
     return render_template('edit_tool.html', Tool_Master = data[0])
  
 @app.route('/tool/update/<tno>', methods=['POST'])
@@ -612,18 +725,23 @@ def update_tool(tno):
         tlpc = request.form['tlpc']
         maccat = request.form['maccat']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE Tool_master
-            SET 
-            tno = %s,
-            tname = %s,
-            ttype = %s,
-            tlpc = %s,
-            maccat = %s
-            WHERE tno = %s
-        """, (tno,tname,ttype,tlpc,maccat,tno))
-        flash('Tool Updated Successfully')
-        conn.commit()
+        try:
+            cur.execute("""
+                UPDATE Tool_master
+                SET 
+                tno = %s,
+                tname = %s,
+                ttype = %s,
+                tlpc = %s,
+                maccat = %s
+                WHERE tno = %s
+            """, (tno,tname,ttype,tlpc,maccat,tno))
+            conn.commit()
+            flash('Tool Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
         return redirect(url_for('TIndex'))
  
 @app.route('/tool/delete/<string:tno>', methods = ['POST','GET'])
@@ -632,6 +750,7 @@ def delete_tool(tno):
 
     cur.execute('DELETE FROM Tool_Master WHERE tno = %s', [tno])
     conn.commit()
+    cur.close()
     flash('Tool Removed Successfully')
     return redirect(url_for('TIndex'))
 
@@ -642,22 +761,28 @@ def SIndex():
         s = "SELECT * FROM Shift_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
+        cur.close()
         return render_template('Shift_Master.html', list_shift = list_users)
     return havingAccess()
 
 @app.route('/shift/add_shift', methods=['POST'])
 def add_shift():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         scode = request.form['scode']
         sname = request.form['sname']
         brlu = request.form['brlu']
         start_time = request.form['start_time']
         end_time = request.form['end_time']
-        cur.execute("INSERT INTO Shift_Master (scode,sname,brlu,start_time,end_time) VALUES (%s,%s,%s,%s,%s)", (scode,sname,brlu,start_time,end_time))
-        conn.commit()
+        try:
+            cur.execute("INSERT INTO Shift_Master (scode,sname,brlu,start_time,end_time) VALUES (%s,%s,%s,%s,%s)", (scode,sname,brlu,start_time,end_time))
+            conn.commit()
+            flash('Shift Added successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
         cur.close()
-        flash('Shift Added successfully')
+
         return redirect(url_for('SIndex'))
  
 @app.route('/shift/edit/<scode>', methods = ['POST', 'GET'])
@@ -667,7 +792,6 @@ def get_shift(scode):
     cur.execute("SELECT * FROM Shift_Master WHERE scode = %s", [scode])
     data = cur.fetchall()
     cur.close()
-    print(data)
     return render_template('edit_shift.html', Shift_Master = data[0])
  
 @app.route('/shift/update/<scode>', methods=['POST'])
@@ -679,18 +803,23 @@ def update_shift(scode):
         end_time = request.form['end_time']
         brlu = request.form['brlu']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE Shift_master
-            SET 
-            scode = %s,
-            sname = %s,
-            brlu = %s,
-            start_time = %s,
-            end_time = %s
-            WHERE scode = %s
-        """, (scode,sname,brlu,start_time,end_time,scode))
-        flash('Shift Updated Successfully')
-        conn.commit()
+        try:
+            cur.execute("""
+                UPDATE Shift_master
+                SET 
+                scode = %s,
+                sname = %s,
+                brlu = %s,
+                start_time = %s,
+                end_time = %s
+                WHERE scode = %s
+            """, (scode,sname,brlu,start_time,end_time,scode))
+            conn.commit()
+            flash('Shift Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
         return redirect(url_for('SIndex'))
  
 @app.route('/shift/delete/<string:scode>', methods = ['POST','GET'])
@@ -698,6 +827,7 @@ def delete_shift(scode):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute('DELETE FROM Shift_Master WHERE scode = %s', [scode])
     conn.commit()
+    cur.close()
     flash('Shift Removed Successfully')
     return redirect(url_for('SIndex'))
 
@@ -708,19 +838,25 @@ def PLIndex():
         s = "SELECT * FROM Product_line_Master"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
+        cur.close()
         return render_template('Product_line_Master.html', list_product_line = list_users)
     return havingAccess()
 
 @app.route('/product_line/add_product_line', methods=['POST'])
 def add_product_line():
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == 'POST':
-        
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         pcode = request.form['pcode']
         pline = request.form['pline']
-        cur.execute("INSERT INTO Product_line_Master (pcode,pline) VALUES (%s,%s)", (pcode,pline))
-        conn.commit()
-        flash('Product_line Added successfully')
+        try:
+            cur.execute("INSERT INTO Product_line_Master (pcode,pline) VALUES (%s,%s)", (pcode,pline))
+            conn.commit()
+            flash('Product_line Added successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
+
         return redirect(url_for('PLIndex'))
  
 @app.route('/product_line/edit/<pcode>', methods = ['POST', 'GET'])
@@ -730,7 +866,6 @@ def get_product_line(pcode):
     cur.execute("SELECT * FROM Product_line_Master WHERE pcode = %s", [pcode])
     data = cur.fetchall()
     cur.close()
-    print(data)
     return render_template('edit_product_line.html', Product_line_Master = data[0])
  
 @app.route('/product_line/update/<pcode>', methods=['POST'])
@@ -740,15 +875,20 @@ def update_product_line(pcode):
         pcode = request.form['pcode']
         pline = request.form['pline']
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cur.execute("""
-            UPDATE Product_line_master
-            SET 
-            pcode = %s,
-            pline = %s
-            WHERE pcode = %s
-        """, (pcode,pline,pcode))
-        flash('Product_line Updated Successfully')
-        conn.commit()
+        try:
+            cur.execute("""
+                UPDATE Product_line_master
+                SET 
+                pcode = %s,
+                pline = %s
+                WHERE pcode = %s
+            """, (pcode,pline,pcode))
+            conn.commit()
+            flash('Product_line Updated Successfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            flash('Error Occurred : '+str(error))
+            conn.rollback()
+        cur.close()
         return redirect(url_for('PLIndex'))
  
 @app.route('/product_line/delete/<string:pcode>', methods = ['POST','GET'])
@@ -757,6 +897,7 @@ def delete_product_line(pcode):
 
     cur.execute('DELETE FROM Product_line_Master WHERE pcode = %s', [pcode])
     conn.commit()
+    cur.close()
     flash('Product_line Removed Successfully')
     return redirect(url_for('PLIndex'))
  
@@ -780,7 +921,7 @@ def DbIndex():
             machine_details["current_count"] = machine["current_count"]
             machine_details["efficiency"] = machine["efficiency"]
             machine_details["efficiency_tolarance"] = 5
-            cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
             s = "SELECT * FROM machine_operator INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code where machine_operator.shift=\'"+str(currentShift)+"\' AND machine_operator.machine_no=\'"+machine["mno"]+"\' AND machine_operator.date_=current_date"
             cur.execute(s) # Execute the SQL
             users_parts_list_for_machine = cur.fetchall()
@@ -806,6 +947,7 @@ def DbIndex():
                 dashboard_machine_data_container=[]
         dashboard_machine_data_split.append(dashboard_machine_data_container)
         page_count = len(dashboard_machine_data_split)
+        cur.close()
         return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh)
     return havingAccess()
 
@@ -876,6 +1018,7 @@ def RIndex():
         s= "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'machine_data\'"
         cur.execute(s) # Execute the SQL
         machine_data = cur.fetchall()
+        cur.close()
 
         return render_template('Report.html', employee_master=employee_master, machine_master=machine_master, machine_data=machine_data,machine_operator=machine_operator, table_vs_column=table_vs_column, list_data = list_data, status=status)
     # User is not loggedin redirect to login page
@@ -1066,6 +1209,7 @@ def employees_report():
         s = "SELECT * FROM Tool_Master"
         cur.execute(s) # Execute the SQL
         toolItem = cur.fetchall()
+        cur.close()
 
     return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
     # User is not loggedin redirect to login page

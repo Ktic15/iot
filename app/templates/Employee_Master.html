@@ -48,16 +48,16 @@
         <form action="{{url_for('add_Employee')}}" method="POST">
           <h2> Add new Employee </h2>
             <div class="form-group">
-                <input type="text" class="form-control" name="ecode" placeholder="Employee Code">
+                <input type="text" class="form-control" name="ecode" placeholder="Employee Code" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="emaster" placeholder="Employee Name">
+                <input type="text" class="form-control" name="emaster" placeholder="Employee Name" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="edeg" placeholder="Employee designation">
+                <input type="text" class="form-control" name="edeg" placeholder="Employee designation" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="aow" placeholder="Area of Work">
+                <input type="text" class="form-control" name="aow" placeholder="Area of Work" required>
               </div>
               <div class="form-group">
                 <input type="text" class="form-control" name="eaddress" placeholder="Employee Address">
@@ -69,9 +69,11 @@
               <div class="form-group">
                 <input type="text" class="form-control" name="emobile" placeholder="Employee Mobile Number">
               </div>
-              
               <div class="form-group">
-                <input type="text" class="form-control" name="fmanager" placeholder="Function Manager">
+                <input type="text" class="form-control" name="ealtmobile" placeholder="Employee Alternate Mobile Number">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" name="fmanager" placeholder="Function Manager" required>
               </div>
           
           <button class="btn btn-primary btn-block">
@@ -83,7 +85,7 @@
         <h3>Upload Excel File</h3>
         <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
           <div class="form-group"> 
-          <input type="text" class="form-control" name="fname" value="EIndex" >
+          <input type="text" class="form-control" name="fname" value="employee_master" >
           <input id="file" type="file" name="file"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
             <input class="btn btn-primary btn-block" type="submit" value="Upload" onclick="checkFile()">
@@ -102,6 +104,7 @@
             <td>Employee Address</td>
             <td>Employee Aadhaar</td>
             <td>Employee Mobile Number</td>
+            <td>Employee Alternate Mobile Number</td>
             <td>Function Manager</td>
             <td>Action</td>
           </tr>
@@ -116,6 +119,7 @@
             <td>{{row[4]}}</td>
             <td>{{row[5]}}</td>
             <td>{{row[6]}}</td>
+            <td>{{row.employee_alternate_mobile_no}}</td>
             <td>{{row[7]}}</td>
             <td width="130">
               <a href="/edit/{{row[0]}}" class="btn btn-secondary btn-sm">edit</a>

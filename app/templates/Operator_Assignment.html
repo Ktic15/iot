@@ -41,7 +41,7 @@
         <h3>Upload Excel File</h3>
         <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
           <div class="form-group"> 
-          <input type="text" class="form-control" name="fname" value="Svindex" >
+          <input type="text" class="form-control" name="fname" value="machine_operator" >
           <input id="file" type="file" name="file"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
             <input class="btn btn-primary btn-block" type="submit" value="Upload" onclick="checkFile()">
@@ -164,7 +164,9 @@
             <td>{{row.reason}}</td>
             <td width="130">
               <a href="/oa/change/{{row[0]}}" class="btn btn-secondary btn-sm">Change operator</a>
-              
+              {%if session['role']=="admin" or session['role']=="it-role"%}
+                <a href="/operator_assignment/delete/{{row[0]}}" class="btn btn-danger btn-delete btn-sm" style="margin-top:5px;margin-left:25%;">delete</a>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}

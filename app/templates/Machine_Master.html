@@ -48,26 +48,26 @@
       <div class="card card-body">
         <form action="/machine/add_machine" method="POST">
             <div class="form-group">
-                <input type="text" class="form-control" name="Mno" placeholder="Machine No.">
+                <input type="text" class="form-control" name="Mno" placeholder="Machine No." required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="mname" placeholder="Machine Name">
+                <input type="text" class="form-control" name="mname" placeholder="Machine Name" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="mcat" placeholder="Machine Category">
+                <input type="text" class="form-control" name="mcat" placeholder="Machine Category" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="mmnu" placeholder="Machine Manufacturer">
+                <input type="text" class="form-control" name="mmnu" placeholder="Machine Manufacturer" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="contdet" placeholder="Controller Details">
+                <input type="text" class="form-control" name="contdet" placeholder="Controller Details" required>
               </div>
 
               <div class="form-group">
-                <input type="text" class="form-control" name="doc" placeholder="Date Of Constructions">
+                <input type="text" class="form-control" name="doc" placeholder="Date Of Constructions" required>
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" name="mkva" placeholder="Machine KVA">
+                <input type="text" class="form-control" name="mkva" placeholder="Machine KVA" required>
               </div>
           <button class="btn btn-primary btn-block">
             Save 
@@ -75,11 +75,10 @@
         </form>
         <br>
           <br>
-        </form>
         <h3>Upload Excel File</h3>
         <form action="{{ url_for('view') }}" method="post" enctype="multipart/form-data">
           <div class="form-group"> 
-          <input type="text" class="form-control" name="fname" value="MIndex" >
+          <input type="text" class="form-control" name="fname" value="machine_master" >
           <input id="file" type="file" name="file"
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
             <input class="btn btn-primary btn-block" type="submit" value="Upload" onclick="checkFile()">
