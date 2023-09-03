@@ -95,6 +95,9 @@ DB_PORT = "5432"
 DB passwords
 espmqtt, iot
 
+pg connect to windows
+https://blog.devart.com/configure-postgresql-to-allow-remote-connection.html
+
 default user details
 name - admin
 password - admin
