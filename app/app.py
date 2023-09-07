@@ -93,7 +93,7 @@ def loop():
                             cur.execute(s) # Execute the SQL mo_efficiency mo_count
                         conn.commit()
                     except (Exception, psycopg2.DatabaseError) as error:
-                        flash('Error Occurred : '+str(error))
+                        print('Error Occurred in loop : '+str(error))
                         conn.rollback()
 
                 previousShift=currentShift
