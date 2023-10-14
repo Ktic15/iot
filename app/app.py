@@ -1099,12 +1099,18 @@ def employees_report():
                 length = len(list_data)
                 if length!=0:
                     efficiency=0
+                    efficiency_none_count=0
                     count=0
+                    count_none_count=0
                     for list in list_data:
                         if list["mo_efficiency"]!=None:
                             efficiency+=int(list["mo_efficiency"])
+                        else:
+                            efficiency_none_count+=1
                         if list["mo_count"]!=None:
                             count+=int(list["mo_count"])
+                        else:
+                            count_none_count+=1
                     #Total count
                     total=["" for i in range(len(columns)-3)]
                     total.append("Total Count")
@@ -1113,7 +1119,7 @@ def employees_report():
                     #Average
                     total=["" for i in range(len(columns)-3)]
                     total.append("Total Average")
-                    total.extend([format(efficiency/length,'.2f'),format(count/length,'.2f')])
+                    total.extend([format(efficiency/(length-efficiency_none_count),'.2f'),format(count/(length-count_none_count),'.2f')])
                     list_data.append(total)
                     extra_bottom_data=2
             elif "export" in request.form:
