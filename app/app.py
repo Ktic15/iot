@@ -926,6 +926,7 @@ def DbIndex():
             machine_details["mno"] = machine["mno"]
             machine_details["current_count"] = machine["current_count"]
             machine_details["efficiency"] = machine["efficiency"]
+            machine_details["status"] = machine["status"]
             machine_details["efficiency_tolarance"] = 5
 
             s = "SELECT * FROM machine_operator INNER JOIN part_master ON machine_operator.part_no=part_master.pcode INNER JOIN machine_master ON machine_operator.machine_no=machine_master.mno INNER JOIN employee_master ON machine_operator.operator_id=employee_master.employee_code where machine_operator.shift=\'"+str(currentShift)+"\' AND machine_operator.machine_no=\'"+machine["mno"]+"\' AND machine_operator.date_=current_date"

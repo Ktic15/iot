@@ -79,6 +79,10 @@ ALTER TABLE part_master ALTER COLUMN efficiency_tolarance SET DEFAULT 10;
 ALTER TABLE employee_master ADD employee_alternate_mobile_no VARCHAR(40);
 employee_address, employee_aadhaar, employee_mobile_no columns in employee_master table NOT NULL removed
 
+_new-5_(14-10-2023)
+ALTER TABLE machine_data ADD status VARCHAR(40);
+
+
 git link https://github.com/Ktic15/iot
 
 requirement generation

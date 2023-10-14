@@ -26,6 +26,7 @@
                      <table class="dashboard-table table-striped" >
                          <tr>
                              <th> Machine </th>
+                             <th> Status </th>
                              <th>Operator Name</th>
                              <th>Part</th>
                              <th> count</th>
@@ -38,6 +39,13 @@
                             <td>
                                 {{item.mno}}/{{item.mname}}
                             </td>
+                             <td>
+                                 {%if item.status=="active"%}
+                                    <div style="background-color: #27ae60">{{item.status}}</div>
+                                 {%else%}
+                                    <div style="background-color: red">{{item.status}}</div>
+                                 {%endif%}
+                             </td>
                             <td>
                                {%if item.employee_code%}
                                {{item.employee_code}}/{{item.employee_name}}
