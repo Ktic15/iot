@@ -958,6 +958,12 @@ def DbIndex():
         return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh)
     return havingAccess()
 
+@app.route('/graph')
+def graphIndex():
+    if(havingAccess()==True):
+        return render_template('graph.html',currentShift=getCurrentShift())
+    return havingAccess()
+
 @app.route('/datahub')
 def DhIndex():
     return redirect("/employee")

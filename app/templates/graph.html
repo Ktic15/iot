@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+<body>
+<div class="bg-dark" style='position: absolute; left:10px; top:55px; z-index:1; width:500px; height:35px; color:white;'><h4 style="display:inline;">Graph</h4> &nbsp&nbsp&nbsp Current Shift : {{currentShift}}</div>
+    <iframe id="iframe" style='position: fixed; width: 100%; height:95%; top:30px; z-index:-1' frameborder="0"></iframe>
+</body>
+<script>
+    $(document).ready(function() {
+      $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );
+      $('#nav_graph').addClass( 'active' );
+    });
+    $('#iframe').attr('src', "http://"+window.location.hostname+":1880/ui")
+  </script>
+{% endblock %}
+
