@@ -1049,6 +1049,7 @@ def employees_report():
         columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","NPC Count","Machine No","Machine Name","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
         table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","product_line_master.pline","machine_operator.part_no","part_master.pdes","part_master.npccps","machine_operator.machine_no","machine_master.mname","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
         part_master_tolorance_data=[]
+        extra_bottom_data=0
         #app.logger.warning('testing warning log')
         #app.logger.error('testing error log')
         #app.logger.info('testing info log')
@@ -1093,8 +1094,6 @@ def employees_report():
 
                 length = len(list_data)
                 if length!=0:
-                    total=["" for i in range(len(columns)-3)]
-                    total.append("Total Average")
                     efficiency=0
                     count=0
                     for list in list_data:
@@ -1102,8 +1101,17 @@ def employees_report():
                             efficiency+=int(list["mo_efficiency"])
                         if list["mo_count"]!=None:
                             count+=int(list["mo_count"])
+                    #Total count
+                    total=["" for i in range(len(columns)-3)]
+                    total.append("Total Count")
+                    total.extend([format(efficiency,'.2f'),format(count,'.2f')])
+                    list_data.append(total)
+                    #Average
+                    total=["" for i in range(len(columns)-3)]
+                    total.append("Total Average")
                     total.extend([format(efficiency/length,'.2f'),format(count/length,'.2f')])
                     list_data.append(total)
+                    extra_bottom_data=2
             elif "export" in request.form:
                 if list_data!=[]:
                     df = pandas.DataFrame(list_data,index=[x for x in range(1,len(list_data)+1)], columns=columns)
@@ -1224,7 +1232,7 @@ def employees_report():
         toolItem = cur.fetchall()
         cur.close()
 
-        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data)
+        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data,extra_bottom_data=extra_bottom_data)
     # User is not loggedin redirect to login page
     return havingAccess([""])
 

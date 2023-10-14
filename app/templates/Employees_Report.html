@@ -121,7 +121,7 @@
                 {% for row in rows %}
                     {%if row == None%}
                         <td>None</td>
-                    {%elif loop.index==columns_length-1 and list_data_length!=outer_loop%}
+                    {%elif loop.index==columns_length-1 and list_data_length-extra_bottom_data>=outer_loop%}
                         <td>
                             {{row}}
                             {% set efficiency = row %}
