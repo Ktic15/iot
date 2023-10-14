@@ -768,7 +768,7 @@ def delete_tool(tno):
 def SIndex():
     if(havingAccess([""])==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        s = "SELECT * FROM Shift_Master"
+        s = "SELECT * FROM Shift_Master ORDER BY scode ASC"
         cur.execute(s) # Execute the SQL
         list_users = cur.fetchall()
         cur.close()
