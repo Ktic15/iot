@@ -87,9 +87,9 @@ def loop():
                         tool_no = tool_data[0]["tool_no"]
                     try:
                         if check==[]:
-                            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShift,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["current_count"],tool_no))
+                            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,machine_start_time,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShift,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["efficiency"],machine_data["previous_count"],machine_data["previous_machine_start_time"],tool_no))
                         else:
-                            s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["efficiency"])+"\',mo_count=\'"+str(machine_data["current_count"])+"\',tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                            s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["efficiency"])+"\',mo_count=\'"+str(machine_data["previous_count"])+"\',machine_start_time=\'"+str(machine_data["previous_machine_start_time"])+"\',tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate)+"\' AND shift=\'"+str(previousShift)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
                             cur.execute(s) # Execute the SQL mo_efficiency mo_count
                         conn.commit()
                     except (Exception, psycopg2.DatabaseError) as error:
@@ -1050,8 +1050,8 @@ def employees_report():
         global table_vs_column
         global userInput
         status = ""
-        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","NPC Count","Machine No","Machine Name","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
-        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","product_line_master.pline","machine_operator.part_no","part_master.pdes","part_master.npccps","machine_operator.machine_no","machine_master.mname","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
+        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","NPC Count","Machine No","Machine Name","Start Time","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
+        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","product_line_master.pline","machine_operator.part_no","part_master.pdes","part_master.npccps","machine_operator.machine_no","machine_master.mname","machine_operator.machine_start_time","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
         part_master_tolorance_data=[]
         extra_bottom_data=0
         #app.logger.warning('testing warning log')

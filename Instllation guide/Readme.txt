@@ -81,7 +81,10 @@ employee_address, employee_aadhaar, employee_mobile_no columns in employee_maste
 
 _new-5_(14-10-2023)
 ALTER TABLE machine_data ADD status VARCHAR(40);
-
+ALTER TABLE machine_data ADD previous_count VARCHAR(40);
+ALTER TABLE machine_data ADD machine_start_time TIME;
+ALTER TABLE machine_data ADD previous_machine_start_time TIME;
+ALTER TABLE machine_operator ADD machine_start_time TIME;
 
 git link https://github.com/Ktic15/iot
 
