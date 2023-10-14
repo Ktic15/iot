@@ -244,7 +244,7 @@ def Svindex():
         s = "SELECT * FROM Employee_Master where employee_designation='Shift supervisor'"
         cur.execute(s) # Execute the SQL
         Svitem = cur.fetchall()
-        s = "SELECT * FROM machine_operator FULL OUTER JOIN change_reason ON machine_operator.sno=change_reason.sno FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode where date_=current_date"
+        s = "SELECT * FROM machine_operator FULL OUTER JOIN change_reason ON machine_operator.sno=change_reason.sno FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode where date_=current_date ORDER BY machine_operator.Sno DESC"
         cur.execute(s) # Execute the SQL
         opitems = cur.fetchall()
         s = "SELECT CURRENT_DATE"
