@@ -247,6 +247,10 @@ def Svindex():
         s = "SELECT * FROM machine_operator FULL OUTER JOIN change_reason ON machine_operator.sno=change_reason.sno FULL OUTER JOIN product_line_master ON machine_operator.product_line=product_line_master.pcode where date_=current_date"
         cur.execute(s) # Execute the SQL
         opitems = cur.fetchall()
+        s = "SELECT CURRENT_DATE"
+        cur.execute(s) # Execute the SQL
+        gggg = cur.fetchall()
+        flash(gggg)
         cur.close()
         return render_template('Operator_Assignment.html', Plitems = Plitem, Sitems = Sitem, Mitems=Mitem,Pitems=Pitem,Eitems=Eitem, Svitems = Svitem,list_operators=opitems)
     return havingAccess(["supervisor"])
