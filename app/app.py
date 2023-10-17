@@ -1119,7 +1119,13 @@ def employees_report():
                     #Average
                     total=["" for i in range(len(columns)-3)]
                     total.append("Total Average")
-                    total.extend([format(efficiency/(length-efficiency_none_count),'.2f'),format(count/(length-count_none_count),'.2f')])
+                    efficiency_cal = 0
+                    count_cal = 0
+                    if length-efficiency_none_count!=0:
+                        efficiency_cal = efficiency/(length-efficiency_none_count)
+                    if length-count_none_count!=0:
+                        count_cal = count/(length-count_none_count)
+                    total.extend([format( efficiency_cal,'.2f'),format(count_cal,'.2f')])
                     list_data.append(total)
                     extra_bottom_data=2
             elif "export" in request.form:
