@@ -915,7 +915,7 @@ def delete_product_line(pcode):
 def DbIndex():
     if(havingAccess()==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        s = "SELECT * FROM machine_master INNER JOIN machine_data ON machine_master.mno=machine_data.machine_no"
+        s = "SELECT * FROM machine_master INNER JOIN machine_data ON machine_master.mno=machine_data.machine_no ORDER by machine_data.status ASC, machine_data.efficiency DESC"
         cur.execute(s) # Execute the SQL
         machine_list = cur.fetchall()
 
