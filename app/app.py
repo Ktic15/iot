@@ -30,8 +30,11 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 
 # Global variables
 list_data = []
+list_data_hourly = []
+columns_hourly = []
 table_vs_column=[]
 userInput={}
+userInput_hourly={}
 stop_threads = False
 autoRefresh = 1000*60*5 # 5 mins in millisec #auto refresh dashboard page and check shift change in thread loop
 
@@ -1249,6 +1252,82 @@ def employees_report():
         cur.close()
 
         return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data,extra_bottom_data=extra_bottom_data)
+    # User is not loggedin redirect to login page
+    return havingAccess([""])
+
+@app.route('/hourly_report', methods=['POST','GET'])
+def hourly_report():
+    # Check if user is loggedin
+    if(havingAccess([""])==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        global list_data_hourly
+        global table_vs_column
+        global userInput_hourly
+        global columns_hourly
+
+        status = ""
+        error_msg = None
+        columns = ["Date and Time"]
+        table_vs_column = ["hourly_report.dateandtime"]
+        part_master_tolorance_data=[]
+        extra_bottom_data=0
+        if request.method == 'POST':
+            if "save" in request.form:
+                list_data_hourly = []
+                machineCode = request.form["machineCode"]
+                fromDate = request.form["fromDate"]
+                toDate = request.form["toDate"]
+                userInput_hourly ={"machineCode":machineCode,"fromDate":fromDate,"toDate":toDate}
+
+                s = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'hourly_report\'"
+                cur.execute(s) # Execute the SQL
+                columns_data = cur.fetchall()
+                columns = [i[0] for i in columns_data]
+
+                if machineCode == "all":
+                    columns.pop(0)
+                    table_vs_column = columns
+                    temp = [i.upper() for i in columns[1:]]
+                    columns = ["Date and Time"]
+                    columns.extend(temp)
+                else:
+                    if machineCode.lower() in columns:
+                        columns = ["Date and Time",machineCode]
+                        table_vs_column = ["hourly_report.dateandtime","hourly_report."+machineCode.lower()]
+                    else:
+                        error_msg = "The selected Machine data not available in database on hourly_report table. Check the hardware attached to the machine and check Node red or Contact the support team"
+                        flash(error_msg)
+                columns_hourly=columns
+                if error_msg==None:
+                    s = "SELECT "
+                    for column in table_vs_column:
+                        s+=column+","
+                    s=s[0:-1]
+                    s+=" FROM hourly_report WHERE hourly_report.dateandtime::date >= \'"+fromDate+"\' AND hourly_report.dateandtime::date <= \'"+toDate+"\'"
+                    cur.execute(s) # Execute the SQL
+                    list_data_hourly = cur.fetchall()
+
+            elif "export" in request.form:
+                if list_data_hourly!=[]:
+                    df = pandas.DataFrame(list_data_hourly,index=[x for x in range(1,len(list_data_hourly)+1)], columns=columns_hourly)
+                    fileName='Reports/Hourly_Reports/hourly_report_'+datetime.datetime.utcnow().strftime("%Y-%m-%d_%H.%M.%S.%f")[:-4]
+                    df.to_excel(fileName+".xlsx", sheet_name='hourly_report')
+                    status="export success"
+                    return send_file("..\\"+fileName+".xlsx", mimetype='text/csv', as_attachment=True)
+                else:
+                    status="No date to export"
+            if "reset" in request.form:
+                list_data_hourly = []
+                userInput_hourly={}
+                columns_hourly=[]
+
+        s = "SELECT * FROM Machine_Master"
+        cur.execute(s) # Execute the SQL
+        machinesItem = cur.fetchall()
+
+        if columns_hourly==[]:
+            columns_hourly = columns
+        return render_template('hourly_Report.html', machinesItem=machinesItem, columns=columns_hourly, list_data = list_data_hourly, status=status,userInput=userInput_hourly)
     # User is not loggedin redirect to login page
     return havingAccess([""])
 

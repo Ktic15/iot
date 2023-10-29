@@ -69,3 +69,9 @@
 .dashboard-table, .dashboard-table th, .dashboard-table td{
     border:1px solid;
 }
+.nav-up{
+    margin-top:-25px;
+}
+.nav-border-remove{
+    box-shadow: none;
+}

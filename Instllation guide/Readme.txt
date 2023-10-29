@@ -86,6 +86,15 @@ ALTER TABLE machine_data ADD machine_start_time TIME;
 ALTER TABLE machine_data ADD previous_machine_start_time TIME;
 ALTER TABLE machine_operator ADD machine_start_time TIME;
 
+_new-6_(29-10-2023)
+create table hourly_report(
+ 	sno serial primary key,
+	dateandtime TIMESTAMP,
+	w2 VARCHAR(16),
+	w10 varchar(16)
+)
+
+
 git link https://github.com/Ktic15/iot
 
 requirement generation
