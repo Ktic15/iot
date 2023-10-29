@@ -176,7 +176,7 @@ function exportReset(){
             alert("No date to export. Please generate the report");
             return;
         }
-        var sTable = document.getElementById('tab').innerHTML;
+        var sTable = document.getElementById('dtable').innerHTML;
         var style = "<style>";
         style = style + "table {width: 100%;font: 17px Calibri;}";
         style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
@@ -192,7 +192,7 @@ function exportReset(){
         win.document.write('</head>');
 
         win.document.write('<body>');
-        win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+        win.document.write('<table>'+sTable+'</table>');         // THE TABLE CONTENTS INSIDE THE BODY TAG.
         win.document.write('</body></html>');
 
         win.document.close(); 	// CLOSE THE CURRENT WINDOW.
