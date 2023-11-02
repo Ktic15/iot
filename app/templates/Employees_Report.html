@@ -91,6 +91,10 @@
                         {% endfor %}
                     </select>
                 </div>
+                <div class="form-group">
+                    <input type="checkbox" id="show_not_assigned_data" name="show_not_assigned_data" value="yes">
+                    <label for="show_not_assigned_data">Show Not Assigned data</label>
+                </div>
 <!--                {%if list_data!=[] %}-->
 <!--                    <div class="form-group">-->
 <!--                        <label>Export as PDF: </label>-->
@@ -164,6 +168,9 @@ if (status!=""){
    document.getElementById('{{name}}').value='{{value}}';
 '{% endfor %}'
 
+'{% if userInput_checkbox %}'
+    document.getElementById("show_not_assigned_data").checked = true;
+'{% endif %}'
 function exportCheck(){
     if ('{{list_data}}'=='[]'){
         event.preventDefault();

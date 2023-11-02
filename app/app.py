@@ -34,6 +34,7 @@ list_data_hourly = []
 columns_hourly = []
 table_vs_column=[]
 userInput={}
+userInput_checkbox=False
 userInput_hourly={}
 stop_threads = False
 autoRefresh = 1000*60*5 # 5 mins in millisec #auto refresh dashboard page and check shift change in thread loop
@@ -1052,6 +1053,7 @@ def employees_report():
         global list_data
         global table_vs_column
         global userInput
+        global userInput_checkbox
         status = ""
         columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","NPC Count","Machine No","Machine Name","Start Time","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
         table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","product_line_master.pline","machine_operator.part_no","part_master.pdes","part_master.npccps","machine_operator.machine_no","machine_master.mname","machine_operator.machine_start_time","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
@@ -1072,6 +1074,11 @@ def employees_report():
                 toDate = request.form["toDate"]
                 shiftCode = request.form["shiftCode"]
                 toolCode = request.form["toolCode"]
+                showNotAssignedData = request.form.get("show_not_assigned_data")
+                if showNotAssignedData==None:
+                    userInput_checkbox=False
+                else:
+                    userInput_checkbox=True
                 userInput ={"employeeCode":employeeCode,"machineCode":machineCode,"supervisorCode":supervisorCode,"partCode":partCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode,"toolCode":toolCode}
                 s = "SELECT "
                 for column in table_vs_column:
@@ -1092,7 +1099,8 @@ def employees_report():
                     s+=" AND machine_operator.part_no=\'"+partCode+"\'"
                 if toolCode!="all":
                     s+=" AND machine_operator.tool_no=\'"+toolCode+"\'"
-
+                if showNotAssignedData!="yes":
+                    s+=" AND machine_operator.operator_id!='Not Assigned'"
                 cur.execute(s) # Execute the SQL
                 list_data = cur.fetchall()
                 s = s.replace(ss,"SELECT part_master.efficiency_tolarance")
@@ -1251,7 +1259,7 @@ def employees_report():
         toolItem = cur.fetchall()
         cur.close()
 
-        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,part_master_tolorance_data=part_master_tolorance_data,extra_bottom_data=extra_bottom_data)
+        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,userInput_checkbox=userInput_checkbox,part_master_tolorance_data=part_master_tolorance_data,extra_bottom_data=extra_bottom_data)
     # User is not loggedin redirect to login page
     return havingAccess([""])
 
