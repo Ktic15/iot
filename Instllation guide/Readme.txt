@@ -94,6 +94,10 @@ create table hourly_report(
 	w10 varchar(16)
 )
 
+_new-7_(06-11-2023)
+ALTER TABLE machine_data
+ADD previous_hour_count varchar(255)
+
 
 git link https://github.com/Ktic15/iot
 
