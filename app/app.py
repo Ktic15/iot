@@ -956,14 +956,14 @@ def DbIndex():
         for data in dashboard_machine_data:
             dashboard_machine_data_container.append(data)
             count+=1
-            if count==12:
+            if count==max_per_page:
                 count=0
                 dashboard_machine_data_split.append(dashboard_machine_data_container)
                 dashboard_machine_data_container=[]
         dashboard_machine_data_split.append(dashboard_machine_data_container)
         page_count = len(dashboard_machine_data_split)
         cur.close()
-        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh)
+        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh,max_per_page=max_per_page)
     return havingAccess()
 
 @app.route('/graph')

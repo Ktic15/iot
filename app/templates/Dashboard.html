@@ -21,6 +21,7 @@
     </ol>
     <div class="carousel-inner">
         {% for dashboard_machine_data in dashboard_machine_data_split %}
+            {% set parent_sno = loop.index %}
             <div id="first" class="carousel-item" data-interval="{{10000}}">
                  <div class="container-fluid" style="margin:0%;padding:1% 2%;height:100%">
                      <table class="dashboard-table table-striped" >
@@ -37,7 +38,9 @@
 
                          {% for item in dashboard_machine_data %}
                          <tr>
-                            <td>{{loop.index}}</td>
+                            <td>
+                                {{ ((parent_sno-1) * max_per_page) + loop.index }}
+                            </td>
                             <td>
                                 {{item.mno}}/{{item.mname}}
                             </td>
