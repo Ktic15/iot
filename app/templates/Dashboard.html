@@ -25,6 +25,7 @@
                  <div class="container-fluid" style="margin:0%;padding:1% 2%;height:100%">
                      <table class="dashboard-table table-striped" >
                          <tr>
+                             <th>Sno</th>
                              <th> Machine </th>
                              <th> Status </th>
                              <th>Operator Name</th>
@@ -36,6 +37,7 @@
 
                          {% for item in dashboard_machine_data %}
                          <tr>
+                            <td>{{loop.index}}</td>
                             <td>
                                 {{item.mno}}/{{item.mname}}
                             </td>
