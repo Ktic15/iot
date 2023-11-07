@@ -1324,7 +1324,9 @@ def hourly_report():
                         cur.execute(ss)
                         shift_master = cur.fetchall()
                         start_time = str(shift_master[0]["start_time"])
+                        start_time = str(int(start_time.split(":")[0])+1)+":"+":".join(start_time.split(":")[1:])
                         end_time = str(shift_master[0]["end_time"])
+                        end_time = str(int(end_time.split(":")[0])+1)+":"+":".join(end_time.split(":")[1:])
                         s+=" AND ( (\'"+start_time+"\'::time <= \'"+end_time+"\'::time AND \'"+start_time+"\' <= hourly_report.dateandtime::time AND \'"+end_time+"\' >= hourly_report.dateandtime::time) or (\'"+start_time+"\'::time > \'"+end_time+"\'::time and ((\'"+start_time+"\'::time <= hourly_report.dateandtime::time and '23:59'>=hourly_report.dateandtime::time) or ('00:00'<=hourly_report.dateandtime::time and \'"+end_time+"\'::time >= hourly_report.dateandtime::time ) ) ) )"
                     cur.execute(s) # Execute the SQL
                     list_data_hourly = cur.fetchall()
