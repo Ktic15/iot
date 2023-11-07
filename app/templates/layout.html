@@ -45,7 +45,7 @@
             </li>
           </ul>
         </div>
-        {%if session['role']=="admin" %}
+        {%if session['role']=="admin" or session['role']=="it-role"%}
         <a href="{{ url_for('register') }}" style="position:absolute; right:380px; color:white;">Register User</a>
         {% endif %}
         {%if session['loggedin'] %}

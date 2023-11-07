@@ -149,7 +149,7 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if 'loggedin' in session and session["role"]=="admin":
+    if 'loggedin' in session and (session["role"]=="admin" or session["role"]=="it-role"):
         cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         # Check if "username", "password" and "email" POST requests exist (user submitted form)
         if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
@@ -200,13 +200,15 @@ def view_users():
 
 @app.route('/users/delete/<string:id>', methods = ['POST','GET'])
 def delete_user(id):
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-    cur.execute('DELETE FROM logincredentials WHERE id = %s', [id])
-    conn.commit()
-    cur.close()
-    flash('User Removed Successfully')
-    return redirect(url_for('view_users'))
+    if(havingAccess([""])==True):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cur.execute('DELETE FROM logincredentials WHERE id = %s', [id])
+        conn.commit()
+        cur.close()
+        flash('User Removed Successfully')
+        return redirect(url_for('view_users'))
+    else:
+        return havingAccess([""])
 
 @app.route('/logout')
 def logout():
