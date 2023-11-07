@@ -95,6 +95,14 @@
             </tr>
             </thead>
             <tbody>
+            {% if userInput.get('shiftCode')=='3' %}
+                <tr>
+                    <td>0</td>
+                    {% for row in columns %}
+                        <td></td>
+                    {% endfor %}
+                </tr>
+            {% endif  %}
             {% for rows in list_data %}
                 {% set outer_loop = loop.index %}
                 <tr>
