@@ -1057,8 +1057,10 @@ def employees_report():
         global userInput
         global userInput_checkbox
         status = ""
-        columns = ["Employee Code","Employee Name","Shift","Date","Product Line","Part No","part Name","NPC Count","Machine No","Machine Name","Start Time","Tool Id","Tool Name","Supervisor","Efficiency(%)","count"]
-        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","product_line_master.pline","machine_operator.part_no","part_master.pdes","part_master.npccps","machine_operator.machine_no","machine_master.mname","machine_operator.machine_start_time","tool_master.tno","tool_master.tname","machine_operator.shift_supervisor_name","machine_operator.mo_efficiency","machine_operator.mo_count"]
+        columns = ["Employee Code","Employee Name","Shift","Date","Part No","part Name","Actual Output","Efficiency(%)","NPC Standard","Machine No","Machine Name","Start Time","Product Line","Supervisor","Tool Id","Tool Name"]
+        table_vs_column=["employee_master.employee_code","employee_master.employee_name","machine_operator.shift","machine_operator.date_","machine_operator.part_no","part_master.pdes","machine_operator.mo_count","machine_operator.mo_efficiency","part_master.npccps","machine_operator.machine_no","machine_master.mname","machine_operator.machine_start_time","product_line_master.pline","machine_operator.shift_supervisor_name","tool_master.tno","tool_master.tname"]
+        column_space_for_result=5
+        efficiency_column=8
         part_master_tolorance_data=[]
         extra_bottom_data=0
         #app.logger.warning('testing warning log')
@@ -1125,12 +1127,13 @@ def employees_report():
                         else:
                             count_none_count+=1
                     #Total count
-                    total=["" for i in range(len(columns)-3)]
+                    total=["" for i in range(column_space_for_result)]
                     total.append("Total Count")
                     total.extend([format(efficiency,'.2f'),format(count,'.2f')])
+                    total.extend(["" for i in range(len(columns)-column_space_for_result-3)])
                     list_data.append(total)
                     #Average
-                    total=["" for i in range(len(columns)-3)]
+                    total=["" for i in range(column_space_for_result)]
                     total.append("Total Average")
                     efficiency_cal = 0
                     count_cal = 0
@@ -1139,6 +1142,7 @@ def employees_report():
                     if length-count_none_count!=0:
                         count_cal = count/(length-count_none_count)
                     total.extend([format( efficiency_cal,'.2f'),format(count_cal,'.2f')])
+                    total.extend(["" for i in range(len(columns)-column_space_for_result-3)])
                     list_data.append(total)
                     extra_bottom_data=2
             elif "export" in request.form:
@@ -1261,7 +1265,7 @@ def employees_report():
         toolItem = cur.fetchall()
         cur.close()
 
-        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,userInput_checkbox=userInput_checkbox,part_master_tolorance_data=part_master_tolorance_data,extra_bottom_data=extra_bottom_data)
+        return render_template('Employees_Report.html',employeesItem=employeesItem, shiftItem=shiftItem,machinesItem=machinesItem,partsItem=partsItem, supervisorsItem=supervisorsItem,toolItem=toolItem, columns=columns, columns_length=len(columns), list_data = list_data, list_data_length = len(list_data), status=status,userInput=userInput,userInput_checkbox=userInput_checkbox,part_master_tolorance_data=part_master_tolorance_data,extra_bottom_data=extra_bottom_data,efficiency_column=efficiency_column)
     # User is not loggedin redirect to login page
     return havingAccess([""])
 
