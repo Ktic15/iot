@@ -1,0 +1,350 @@
+[
+    {
+        "id": "f974ef47d19745f8",
+        "type": "tab",
+        "label": "hourly report",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "dc2390629f1553f6",
+        "type": "postgresql",
+        "z": "f974ef47d19745f8",
+        "name": "Hourly Table",
+        "query": "CREATE TABLE Hourly_report (\n    sno Serial PRIMARY KEY, \n\tdateandtime timestamp \n);",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 430,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dca534382affe770",
+        "type": "inject",
+        "z": "f974ef47d19745f8",
+        "name": "Create hourly History table",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 100,
+        "wires": [
+            [
+                "dc2390629f1553f6"
+            ]
+        ]
+    },
+    {
+        "id": "0af912a730110284",
+        "type": "inject",
+        "z": "f974ef47d19745f8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "0 0-23 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 180,
+        "wires": [
+            [
+                "7acea2041a174f40",
+                "711f88af7146cd83"
+            ]
+        ]
+    },
+    {
+        "id": "50e4a91b53258764",
+        "type": "postgresql",
+        "z": "f974ef47d19745f8",
+        "name": "store hourly data",
+        "query": "INSERT INTO hourly_report(dateandtime,{{msg.payload1}})\nVALUES\n    (CURRENT_TIMESTAMP(0),{{msg.payload2}});",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 1150,
+        "y": 260,
+        "wires": [
+            [
+                "a42b2209ced29aeb"
+            ]
+        ]
+    },
+    {
+        "id": "7acea2041a174f40",
+        "type": "postgresql",
+        "z": "f974ef47d19745f8",
+        "name": "W16 OPERATOR Id",
+        "query": "select machine_no,current_count,previous_hour_count from machine_data;",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 400,
+        "y": 300,
+        "wires": [
+            [
+                "12859ab223c574a6",
+                "4a8a0e9e4db56e57"
+            ]
+        ]
+    },
+    {
+        "id": "12859ab223c574a6",
+        "type": "debug",
+        "z": "f974ef47d19745f8",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "4a8a0e9e4db56e57",
+        "type": "function",
+        "z": "f974ef47d19745f8",
+        "name": "function 1",
+        "func": "var all_columns='';\nvar all_values='';\nfor(let i=0;i<msg.payload.length;i++){  \n    if(i<msg.payload.length-1){\n        all_columns += msg.payload[i].machine_no+',';\n        if (msg.payload[i].current_count!='NaN'){\n            var previous_hour_count = msg.payload[i].previous_hour_count;\n            if (previous_hour_count=='NaN'){\n                previous_hour_count='0';\n            }\n            var result = msg.payload[i].current_count-previous_hour_count;\n            if(result < 0){\n                result = msg.payload[i].current_count\n            }\n            all_values += result+',';\n        }\n        else {\n            all_values +='0,';\n        }\n    }\n    else {\n        all_columns += msg.payload[i].machine_no ;\n        if (msg.payload[i].current_count != 'NaN') {\n            var previous_hour_count = msg.payload[i].previous_hour_count;\n            if (previous_hour_count == 'NaN') {\n                previous_hour_count = '0';\n            }\n            var result = msg.payload[i].current_count - previous_hour_count;\n            if (result < 0) {\n                result = msg.payload[i].current_count\n            }\n            all_values += result;\n        }\n        else { \n            all_values += '0'; \n        }\n    }\n}\nmsg.payload1=all_columns;\nmsg.payload2=all_values;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 300,
+        "wires": [
+            [
+                "3a2414d67465f378",
+                "41999bdb7be4d50e",
+                "fca7af565ea0933d",
+                "50e4a91b53258764"
+            ]
+        ]
+    },
+    {
+        "id": "3a2414d67465f378",
+        "type": "debug",
+        "z": "f974ef47d19745f8",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload1",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1040,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "41999bdb7be4d50e",
+        "type": "debug",
+        "z": "f974ef47d19745f8",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload2",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "a42b2209ced29aeb",
+        "type": "debug",
+        "z": "f974ef47d19745f8",
+        "name": "debug 14",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "fca7af565ea0933d",
+        "type": "postgresql",
+        "z": "f974ef47d19745f8",
+        "name": "current count added to previous hour count",
+        "query": "UPDATE machine_data\nSET\tprevious_hour_count=current_count\nRETURNING *;",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": "1",
+        "outputs": 1,
+        "x": 1110,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d48a44a821b52d35",
+        "type": "inject",
+        "z": "f974ef47d19745f8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 520,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "711f88af7146cd83",
+        "type": "postgresql",
+        "z": "f974ef47d19745f8",
+        "name": "get currrent shift",
+        "query": "SELECT scode FROM shift_master WHERE (start_time::time <= end_time::time and start_time::time <= NOW()::time and end_time::time >= NOW()::time) or (start_time::time > end_time::time and ((start_time::time <= NOW()::time and '23:59'>=NOW()::time)or('00:00'<=NOW()::time and end_time::time >= NOW()::time)))\n      ",
+        "postgreSQLConfig": "576ae76f9052f852",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "3e55fa3f7827feb2",
+                "47b9d55a4e5a6016"
+            ]
+        ]
+    },
+    {
+        "id": "3e55fa3f7827feb2",
+        "type": "debug",
+        "z": "f974ef47d19745f8",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload[0].scode",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "47b9d55a4e5a6016",
+        "type": "function",
+        "z": "f974ef47d19745f8",
+        "name": "function 2",
+        "func": "msg.shift = msg.payload[0].scode;\nglobal.set(\"shift\", 1);\nreturn msg",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 200,
+        "wires": [
+            [
+                "ccdd62fef2cc9b9d"
+            ]
+        ]
+    },
+    {
+        "id": "ccdd62fef2cc9b9d",
+        "type": "debug",
+        "z": "f974ef47d19745f8",
+        "name": "debug 16",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "global.get(\"shift\")",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1180,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "576ae76f9052f852",
+        "type": "postgreSQLConfig",
+        "name": "iot",
+        "host": "127.0.0.1",
+        "hostFieldType": "str",
+        "port": "5432",
+        "portFieldType": "num",
+        "database": "iot-project",
+        "databaseFieldType": "str",
+        "ssl": "false",
+        "sslFieldType": "bool",
+        "applicationName": "",
+        "applicationNameType": "str",
+        "max": "10",
+        "maxFieldType": "num",
+        "idle": "1000",
+        "idleFieldType": "num",
+        "connectionTimeout": "10000",
+        "connectionTimeoutFieldType": "num",
+        "user": "postgres",
+        "userFieldType": "str",
+        "password": "espmqtt",
+        "passwordFieldType": "str"
+    }
+]
