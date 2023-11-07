@@ -1291,7 +1291,8 @@ def hourly_report():
                 machineCode = request.form["machineCode"]
                 fromDate = request.form["fromDate"]
                 toDate = request.form["toDate"]
-                userInput_hourly ={"machineCode":machineCode,"fromDate":fromDate,"toDate":toDate}
+                shiftCode = request.form["shiftCode"]
+                userInput_hourly ={"machineCode":machineCode,"fromDate":fromDate,"toDate":toDate,"shiftCode":shiftCode}
 
                 s = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'hourly_report\'"
                 cur.execute(s) # Execute the SQL
@@ -1318,6 +1319,13 @@ def hourly_report():
                         s+=column+","
                     s=s[0:-1]
                     s+=" FROM hourly_report WHERE hourly_report.dateandtime::date >= \'"+fromDate+"\' AND hourly_report.dateandtime::date <= \'"+toDate+"\'"
+                    if shiftCode!="all":
+                        ss="SELECT * FROM Shift_Master WHERE scode = \'"+shiftCode+"\'"
+                        cur.execute(ss)
+                        shift_master = cur.fetchall()
+                        start_time = str(shift_master[0]["start_time"])
+                        end_time = str(shift_master[0]["end_time"])
+                        s+=" AND ( (\'"+start_time+"\'::time <= \'"+end_time+"\'::time AND \'"+start_time+"\' <= hourly_report.dateandtime::time AND \'"+end_time+"\' >= hourly_report.dateandtime::time) or (\'"+start_time+"\'::time > \'"+end_time+"\'::time and ((\'"+start_time+"\'::time <= hourly_report.dateandtime::time and '23:59'>=hourly_report.dateandtime::time) or ('00:00'<=hourly_report.dateandtime::time and \'"+end_time+"\'::time >= hourly_report.dateandtime::time ) ) ) )"
                     cur.execute(s) # Execute the SQL
                     list_data_hourly = cur.fetchall()
 
@@ -1339,9 +1347,13 @@ def hourly_report():
         cur.execute(s) # Execute the SQL
         machinesItem = cur.fetchall()
 
+        s = "SELECT * FROM Shift_Master"
+        cur.execute(s) # Execute the SQL
+        shiftItem = cur.fetchall()
+
         if columns_hourly==[]:
             columns_hourly = columns
-        return render_template('hourly_Report.html', machinesItem=machinesItem, columns=columns_hourly, list_data = list_data_hourly, status=status,userInput=userInput_hourly)
+        return render_template('hourly_Report.html', machinesItem=machinesItem, shiftItem=shiftItem, columns=columns_hourly, list_data = list_data_hourly, status=status,userInput=userInput_hourly)
     # User is not loggedin redirect to login page
     return havingAccess([""])
 

@@ -98,6 +98,13 @@ _new-7_(06-11-2023)
 ALTER TABLE machine_data
 ADD previous_hour_count varchar(255)
 
+_new-8_(08-11-2023)
+ALTER TABLE hourly_report
+ADD shift varchar(40)
+
+_new-8_2_(08-11-2023)
+removed shift column in hourly_report
+
 
 git link https://github.com/Ktic15/iot
 
