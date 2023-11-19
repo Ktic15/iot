@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="center-box">
+    <h2>Downloads</h2>
+    <br>
+    <a href="{{ url_for('download_help_doc') }}">
+        <h4>Help Document</h4>
+    </a>
+    <br>
+    <h3>Sample Temples</h3>
+    <br>
+    <a href="{{ url_for('download_employee_master') }}">
+        <h4>employee_master.xlsx</h4>
+    </a>
+    <br>
+    <a href="{{ url_for('download_machine_master') }}">
+        <h4>machine_master.xlsx</h4>
+    </a>
+    <br>
+    <a href="{{ url_for('download_machine_operator') }}">
+        <h4>machine_operator.xlsx</h4>
+    </a>
+    <br>
+    <a href="{{ url_for('download_part_master') }}">
+        <h4>part_master.xlsx</h4>
+    </a>
+    <br>
+    <a href="{{ url_for('download_product_line_master') }}">
+        <h4>product_line_master.xlsx</h4>
+    </a>
+    <br>
+    <a href="{{ url_for('download_tool_master') }}">
+        <h4>tool_master.xlsx</h4>
+    </a>
+</div>
+
+<script>
+var status = '{{status}}';
+if (status!=""){
+    alert(status);
+}
+
+$(document).ready(function() {
+  $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );
+  $('#nav_help_doc').addClass( 'active' );
+});
+
+</script>
+
+
+{% endblock %}

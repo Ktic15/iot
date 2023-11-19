@@ -1359,6 +1359,33 @@ def hourly_report():
     # User is not loggedin redirect to login page
     return havingAccess([""])
 
+@app.route('/help_doc')
+def help_doc():
+    if(havingAccess([""])==True):
+        return render_template('help_doc.html')
+    return havingAccess([""])
+@app.route('/download_help_doc', methods=['POST','GET'])
+def download_help_doc():
+    return send_file("..\\"+"Devoloper_files\help-doc\A manual for Employee Machine Monitoring System"+".pdf", mimetype='text/pdf', as_attachment=True)
+@app.route('/download_employee_master', methods=['POST','GET'])
+def download_employee_master():
+    return send_file("..\\"+"Devoloper_files\sample_template\employee_master"+".xlsx", mimetype='text/csv', as_attachment=True)
+@app.route('/download_machine_master', methods=['POST','GET'])
+def download_machine_master():
+    return send_file("..\\"+"Devoloper_files\sample_template\machine_master"+".xlsx", mimetype='text/csv', as_attachment=True)
+@app.route('/download_machine_operator', methods=['POST','GET'])
+def download_machine_operator():
+    return send_file("..\\"+"Devoloper_files\sample_template\machine_operator"+".xlsx", mimetype='text/csv', as_attachment=True)
+@app.route('/download_part_master', methods=['POST','GET'])
+def download_part_master():
+    return send_file("..\\"+"Devoloper_files\sample_template\part_master"+".xlsx", mimetype='text/csv', as_attachment=True)
+@app.route('/download_product_line_master', methods=['POST','GET'])
+def download_product_line_master():
+    return send_file("..\\"+"Devoloper_files\sample_template\product_line_master"+".xlsx", mimetype='text/csv', as_attachment=True)
+@app.route('/download_tool_master', methods=['POST','GET'])
+def download_tool_master():
+    return send_file("..\\"+"Devoloper_files\sample_template\\tool_master"+".xlsx", mimetype='text/csv', as_attachment=True)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
     stop_threads=True
