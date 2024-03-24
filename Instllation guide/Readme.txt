@@ -1,6 +1,7 @@
 
 Setup Steps
-1.Install python using the exe
+1.Download and Install python using the link - https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe
+  Website link - https://www.python.org/downloads/release/python-3114/
 2.run the setup.bat to install the required modules
 3.run the run.bat to start the product
 
