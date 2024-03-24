@@ -1,5 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="collapse navbar-collapse nav-border-remove" id="navbarNavDropdown">
+        <ul class="navbar-nav"  id="nav-dash-header">
+            <li class="nav-item" id="nav-dash-r">
+                <a class="nav-link" href="/dashboard/r">Regular Shift<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item" id="nav-dash-12h">
+                <a class="nav-link" href="/dashboard/12h">12 hour shift</a>
+            </li>
+            <li class="nav-item" id="nav-dash-g">
+                <a class="nav-link" href="/dashboard/g">general shift</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">Machine list</a>
     <span style="color:white;"> Current Shift : {{currentShift}}</span>
@@ -102,6 +119,19 @@
 </div>
 
 <script>
+    $(document).ready(function() {
+      $( '#nav-dash-header' ).find( 'li.active' ).removeClass( 'active' );
+      if ('{{shift_catogory}}'=='r'){
+        $('#nav-dash-r').addClass( 'active' );
+      }
+      else if ('{{shift_catogory}}'=='12h'){
+        $('#nav-dash-12h').addClass( 'active' );
+      }
+      else{
+        $('#nav-dash-g').addClass( 'active' );
+      }
+    });
+
     $(document).ready(function() {
       $( '#nav-header' ).find( 'li.active' ).removeClass( 'active' );
       $('#nav_dashboard').addClass( 'active' );

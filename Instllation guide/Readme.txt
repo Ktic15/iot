@@ -105,6 +105,11 @@ ADD shift varchar(40)
 _new-8_2_(08-11-2023)
 removed shift column in hourly_report
 
+_new-9_(24-03-2024)
+create table machine_data_g as (select * from machine_data);
+create table machine_data_12h as (select * from machine_data);
+create table shift_master_g as (select * from shift_master);
+create table shift_master_12h as (select * from shift_master);
 
 git link https://github.com/Ktic15/iot
 

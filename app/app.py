@@ -60,6 +60,26 @@ def getCurrentShift():
       cur.close()
       return shift_master[0][0]
 
+def getCurrentShift_12h():
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    today = datetime.datetime.now()
+    current_time = today.strftime("%H:%M")
+    s = "SELECT * FROM shift_master_12h WHERE (start_time::time <= end_time::time and start_time::time <= '{0}' and end_time::time >= '{0}') or (start_time::time > end_time::time and ((start_time::time <= '{0}' and '23:59'>='{0}')or('00:00'<='{0}' and end_time::time >= '{0}')))".format(current_time)
+    cur.execute(s) # Execute the SQL
+    shift_master = cur.fetchall()
+    cur.close()
+    return shift_master[0][0]
+
+def getCurrentShift_g():
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    today = datetime.datetime.now()
+    current_time = today.strftime("%H:%M")
+    s = "SELECT * FROM shift_master_g WHERE (start_time::time <= end_time::time and start_time::time <= '{0}' and end_time::time >= '{0}') or (start_time::time > end_time::time and ((start_time::time <= '{0}' and '23:59'>='{0}')or('00:00'<='{0}' and end_time::time >= '{0}')))".format(current_time)
+    cur.execute(s) # Execute the SQL
+    shift_master = cur.fetchall()
+    cur.close()
+    return shift_master[0][0]
+
 previousShift=int(getCurrentShift())
 previousShiftDate=datetime.datetime.now().strftime("%d-%m-%y")
 currentEpochTime = time.time()
@@ -91,7 +111,8 @@ def loop():
                         tool_no = tool_data[0]["tool_no"]
                     try:
                         if check==[]:
-                            cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,machine_start_time,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShift,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["previous_efficiency"],machine_data["previous_count"],machine_data["previous_machine_start_time"],tool_no))
+                            pass
+                            #cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,machine_start_time,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate,previousShift,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["previous_efficiency"],machine_data["previous_count"],machine_data["previous_machine_start_time"],tool_no))
                         else:
                             previous_machine_start_time='NULL'
                             if machine_data["previous_machine_start_time"] is not None:
@@ -109,13 +130,121 @@ def loop():
         if stop_threads:
             break
 
+previousShift_12h=getCurrentShift_12h()
+previousShiftDate_12h=datetime.datetime.now().strftime("%d-%m-%y")
+currentEpochTime_12h = time.time()
+def loop_12h():
+    global previousShift_12h
+    global previousShiftDate_12h
+    global stop_threads, currentEpochTime_12h
+    while(True):
+        if currentEpochTime_12h+(autoRefresh/1000) < time.time():
+            currentEpochTime_12h = time.time()
+            currentShift = getCurrentShift_12h()
+            if(previousShift_12h!=currentShift):
+                cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                s = "SELECT * FROM machine_data_12h"
+                cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                machine_datas = cur.fetchall()
+
+                for machine_data in machine_datas:
+                    s="SELECT * FROM machine_operator where date_=\'"+str(previousShiftDate_12h)+"\' AND shift=\'"+str(previousShift_12h)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                    cur.execute(s)
+                    check = cur.fetchall()
+
+                    s="SELECT * FROM tool_data where machine_no=\'"+machine_data["machine_no"]+"\'"
+                    cur.execute(s)
+                    tool_data = cur.fetchall()
+
+                    tool_no = "Not Assigned"
+                    if tool_data!=[]:
+                        tool_no = tool_data[0]["tool_no"]
+                    try:
+                        if check==[]:
+                            pass
+                            #cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,machine_start_time,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate_12h,previousShift_12h,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["previous_efficiency"],machine_data["previous_count"],machine_data["previous_machine_start_time"],tool_no))
+                        else:
+                            previous_machine_start_time='NULL'
+                            if machine_data["previous_machine_start_time"] is not None:
+                                previous_machine_start_time = "\'"+str(machine_data["previous_machine_start_time"])+"\'"
+                            s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["previous_efficiency"])+"\',mo_count=\'"+str(machine_data["previous_count"])+"\',machine_start_time="+str(previous_machine_start_time)+",tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate_12h)+"\' AND shift=\'"+str(previousShift_12h)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                            cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                        conn.commit()
+                    except (Exception, psycopg2.DatabaseError) as error:
+                        print('Error Occurred in loop : '+str(error))
+                        conn.rollback()
+
+                previousShift_12h=currentShift
+                previousShiftDate_12h=datetime.datetime.now().strftime("%d-%m-%y")
+                cur.close()
+        if stop_threads:
+            break
+
+previousShift_g=getCurrentShift_g()
+previousShiftDate_g=datetime.datetime.now().strftime("%d-%m-%y")
+currentEpochTime_g = time.time()
+def loop_g():
+    global previousShift_g
+    global previousShiftDate_g
+    global stop_threads, currentEpochTime
+    while(True):
+        if currentEpochTime+(autoRefresh/1000) < time.time():
+            currentEpochTime = time.time()
+            currentShift = getCurrentShift_g()
+            if(previousShift_g!=currentShift):
+                if(currentShift=="g"):
+                    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+                    s = "SELECT * FROM machine_data_g"
+                    cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                    machine_datas = cur.fetchall()
+
+                    for machine_data in machine_datas:
+                        s="SELECT * FROM machine_operator where date_=\'"+str(previousShiftDate_g)+"\' AND shift=\'"+str(previousShift_g)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                        cur.execute(s)
+                        check = cur.fetchall()
+
+                        s="SELECT * FROM tool_data where machine_no=\'"+machine_data["machine_no"]+"\'"
+                        cur.execute(s)
+                        tool_data = cur.fetchall()
+
+                        tool_no = "Not Assigned"
+                        if tool_data!=[]:
+                            tool_no = tool_data[0]["tool_no"]
+                        try:
+                            if check==[]:
+                                pass
+                                #cur.execute("INSERT INTO Machine_operator (Product_line,Date_,Shift,Machine_No,Operator_Id,Part_No,Shift_supervisor_name,Shift_supervisor_Id,Time_,operator_change,old_alloc,mo_efficiency,mo_count,machine_start_time,tool_no) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", ("Not Assigned",previousShiftDate_g,previousShift_g,machine_data["machine_no"],"Not Assigned","Not Assigned","Not Assigned","Not Assigned",datetime.datetime.now().strftime("%H:%M"),"N",0,machine_data["previous_efficiency"],machine_data["previous_count"],machine_data["previous_machine_start_time"],tool_no))
+                            else:
+                                previous_machine_start_time='NULL'
+                                if machine_data["previous_machine_start_time"] is not None:
+                                    previous_machine_start_time = "\'"+str(machine_data["previous_machine_start_time"])+"\'"
+                                s="UPDATE machine_operator SET mo_efficiency=\'"+str(machine_data["previous_efficiency"])+"\',mo_count=\'"+str(machine_data["previous_count"])+"\',machine_start_time="+str(previous_machine_start_time)+",tool_no=\'"+str(tool_no)+"\' where date_=\'"+str(previousShiftDate_g)+"\' AND shift=\'"+str(previousShift_g)+"\' AND machine_no=\'"+machine_data["machine_no"]+"\'"
+                                cur.execute(s) # Execute the SQL mo_efficiency mo_count
+                            conn.commit()
+                        except (Exception, psycopg2.DatabaseError) as error:
+                            print('Error Occurred in loop : '+str(error))
+                            conn.rollback()
+                    cur.close()
+
+                previousShift_g=currentShift
+                previousShiftDate_g=datetime.datetime.now().strftime("%d-%m-%y")
+        if stop_threads:
+            break
+
 
 x = threading.Thread(target=loop)
 x.start()
+y = threading.Thread(target=loop_12h)
+y.start()
+z = threading.Thread(target=loop_g)
+z.start()
 
 @app.route('/')
 def GhIndex():
-     return  redirect("/dashboard")
+     return  redirect("/dashboard/r")
+@app.route('/dashboard')
+def GhhIndex():
+     return  redirect("/dashboard/r")
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -920,15 +1049,24 @@ def delete_product_line(pcode):
     flash('Product_line Removed Successfully')
     return redirect(url_for('PLIndex'))
  
-@app.route('/dashboard')
-def DbIndex():
+@app.route('/dashboard/<string:shift_catogory>')
+def DbIndex(shift_catogory):
     if(havingAccess()==True):
         cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        s = "SELECT * FROM machine_master INNER JOIN machine_data ON machine_master.mno=machine_data.machine_no ORDER by machine_data.status ASC, machine_data.efficiency DESC"
+        if shift_catogory == "r":
+            s = "SELECT * FROM machine_master INNER JOIN machine_data ON machine_master.mno=machine_data.machine_no ORDER by machine_data.status ASC, machine_data.efficiency DESC"
+            currentShift = getCurrentShift()
+        elif shift_catogory == "12h":
+            s = "SELECT * FROM machine_master INNER JOIN machine_data_12h ON machine_master.mno=machine_data_12h.machine_no ORDER by machine_data_12h.status ASC, machine_data_12h.efficiency DESC"
+            currentShift = getCurrentShift_12h()
+        else:
+            s = "SELECT * FROM machine_master INNER JOIN machine_data_g ON machine_master.mno=machine_data_g.machine_no ORDER by machine_data_g.status ASC, machine_data_g.efficiency DESC"
+            currentShift = getCurrentShift_g()
+
         cur.execute(s) # Execute the SQL
         machine_list = cur.fetchall()
 
-        currentShift = getCurrentShift()
+
 
 
 
@@ -968,7 +1106,7 @@ def DbIndex():
         dashboard_machine_data_split.append(dashboard_machine_data_container)
         page_count = len(dashboard_machine_data_split)
         cur.close()
-        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh,max_per_page=max_per_page)
+        return render_template('Dashboard.html', dashboard_machine_data_split = dashboard_machine_data_split ,currentShift=currentShift,page_count=page_count,autoRefresh=autoRefresh,max_per_page=max_per_page,shift_catogory=shift_catogory)
     return havingAccess()
 
 @app.route('/graph')
